@@ -212,27 +212,46 @@ def plots(root, result, figures):
             axes[ri, col].legend(fontsize=7)
     fig.savefig(figures / "experiment_0007_signed_read.png")
     plt.close(fig)
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4), constrained_layout=True)
+    fig, axes = plt.subplots(2, 2, figsize=(11, 7), constrained_layout=True)
     for ri, rule in enumerate((2, 3)):
         entries = [r for r in result["readout"]["margins"] if r["rule"] == rule and r["calibrated"]]
         x = np.arange(4)
-        axes[ri].bar(
+        axes[0, ri].bar(
             x - 0.18, [r["separation"] for r in entries], 0.36, label="fine W0/W1 separation S"
         )
-        axes[ri].bar(
+        axes[0, ri].bar(
             x + 0.18,
             [5 * r["refinement_error"] for r in entries],
             0.36,
             label="5 x coarse/fine disagreement D",
         )
-        axes[ri].set(
+        axes[0, ri].set(
             xticks=x,
             xticklabels=[r["seed"] for r in entries],
             xlabel="held-out seed",
             ylabel="120-feature Euclidean distance",
             title=f"R{rule}, calibrated, registered S >= 5D",
         )
-        axes[ri].legend(fontsize=7)
+        axes[0, ri].legend(fontsize=7)
+    for ri, rule in enumerate((2, 3)):
+        cases = [r for r in result["readout"]["remote_influence"] if r["rule"] == rule]
+        errors = [100 * r["maximum_field_error"] for r in cases]
+        axes[1, ri].bar(
+            np.arange(8),
+            errors,
+            color=["#bd3939" if value > 1.5 else "#287b9c" for value in errors],
+        )
+        axes[1, ri].axhline(1.5, color="black", ls="--", label="registered 1.5% maximum")
+        axes[1, ri].set(
+            xticks=np.arange(8),
+            xticklabels=[f"{r['seed']}/W{r['symbol']}" for r in cases],
+            ylim=(0, 4.2),
+            ylabel="maximum full signed-field relative L2 (%)",
+            xlabel="held-out seed / write symbol",
+            title=f"R{rule} full-field refinement: {'PASS' if max(errors) <= 1.5 else 'FAIL'}",
+        )
+        axes[1, ri].tick_params(axis="x", labelsize=7)
+        axes[1, ri].legend(fontsize=7)
     fig.savefig(figures / "experiment_0007_uncertainty.png")
     plt.close(fig)
     fig, axes = plt.subplots(2, 1, figsize=(11, 7), constrained_layout=True)
@@ -293,6 +312,26 @@ def report(root, result):
         text.append(
             f"| R{m['rule']} | {'calibrated' if m['calibrated'] else 'raw'} | {c['train/REMOTE_ONLY']['correct']}/8 | {c['evaluate/REMOTE_ONLY']['correct']}/8 | {c['refine/REMOTE_ONLY']['correct']}/8 | {c['evaluate/REMOTE_ONLY']['ties']}/{c['refine/REMOTE_ONLY']['ties']} | {'PASS' if m['margin_pass'] else 'FAIL'} | {verdict(m, result)} |"
         )
+    primary = next(m for m in readout["models"] if m["rule"] == 2 and m["calibrated"])
+    raw = next(m for m in readout["models"] if m["rule"] == 2 and not m["calibrated"])
+    if verdict(primary, result) == "PASS" and verdict(raw, result) != "PASS":
+        text.append(
+            "\nThe registered R2 operation is **calibration-dependent**: its calibrated decoder passes, while the raw decoder fails. This result relies on an externally retained virgin reference and external templates. It does not show that every possible uncalibrated readout would fail, or establish autonomous associative retrieval.\n"
+        )
+    errors = [
+        r
+        for r in readout["predictions"]
+        if r["stage"] == "evaluate"
+        and r["rule"] == 2
+        and r["calibrated"]
+        and r["kind"] == "REMOTE_ONLY"
+        and r["prediction"] != r["expected"]
+    ]
+    text.append(
+        "Primary held-out errors: "
+        + "; ".join(f"seed{r['seed']} W{r['expected']} predicted {r['prediction']}" for r in errors)
+        + ". All coarse/fine predictions, including these errors, agree.\n"
+    )
     text += [
         "\nR2 calibrated is the primary result. R3 and raw readout remain separate secondary results. A software pass cannot override a failed or indeterminate scientific gate. There is no population-level accuracy estimate from these eight paired deterministic cases.\n",
         f"Structural encoding: **{'PASS' if result['structural_pass'] else 'FAIL'}** across {len(result['structure'])} registered rule/seed/grid pairs; {sum(r['distinct'] for r in result['structure'])}/{len(result['structure'])} pairs have distinct W0/W1 palettes; committed P survives exact transient reset. Repeatability: **PASS**, {result['repeat']['identical_files']} original/repeat files byte-identical for seed31/R2/W0 WRITE and its two REMOTE reads on this toolchain.\n",
@@ -323,6 +362,9 @@ def report(root, result):
                 f"| R{rule} | {kind} | {a['correct']}/8 | {b['correct']}/8 | {a['ties']} | {b['ties']} |"
             )
     influence = readout["remote_influence"]
+    text.append(
+        "\nValidity-qualified remote causal verdict: R2 **PASS** (8/8 pairs); R3 **INDETERMINATE** because seed71/W0 fails the full-field refinement bound. The raw contrast threshold alone is reached in all16 pairs; it does not override that failure.\n"
+    )
     text += [
         f"\nRemote causal influence reaches the registered1% raw-vector difference in {sum(r['influence_pass'] for r in influence)}/{len(influence)} selected seed/rule/symbol pairs at both grids. This is a response difference, not an improvement, and is distinct from classification. Control differences are nonadditive; no response percentage is attributed to a specific component. No neuron-level necessity, memory association or resilience test was performed.\n",
         "## Numerical uncertainty\n",
@@ -336,6 +378,14 @@ def report(root, result):
         text.append(
             f"| R{rule} | {100 * max(r['maximum_field_error'] for r in rr):.6f}% | {min(r['edit_jaccard'] for r in rr):.6f} | {sum(r['palette_equal'] for r in rr)}/8 |"
         )
+    for diagnosis in result["refinement_diagnosis"]:
+        if diagnosis["coarse_floor_eligible"] != diagnosis["fine_floor_eligible"]:
+            text.append(
+                f"\nR{diagnosis['rule']} seed{diagnosis['seed']}/W{diagnosis['symbol']} has an eligibility-floor crossing at neuron{diagnosis['site']}, module{diagnosis['module']}: S={diagnosis['coarse_score']:.17e} coarse versus {diagnosis['fine_score']:.17e} fine, around the frozen1e-8 floor. At neuron2168 the coarse run swaps modules10/18 (colors0/2), while fine omits that pair. This explains the recorded palette discrepancy; no counterfactual fixed-palette run was made to attribute the whole-field error solely to this swap. R3's good reduced-feature margin and high edit Jaccard do not rescue its failed1.5% full-field gate. No threshold was changed.\n"
+            )
+    text.append(
+        f"\nVirgin calibration full-field refinement also passes: maximum {100 * max(r['maximum_field_error'] for r in result['calibration_refinement']):.6f}%. All2631 primary/repeat signed checkpoints are retained. The concatenated repeat120-feature file was additionally compared byte-for-byte.\n"
+    )
     text += [
         "\n## Every held-out prediction, including errors and ambiguities\n",
         "The following primary/secondary REMOTE table includes every held-out case. Full train/control/fine predictions, distances, errors, margins, structural and trajectory tables are in the portable package. `None` denotes an ambiguous incorrect case.\n",
@@ -391,8 +441,20 @@ def manual(result):
         lines.append(
             f"- R{model['rule']} {'calibrated' if model['calibrated'] else 'raw'} REMOTE discrimination: **{verdict(model, result)}**; held-out {counts['evaluate/REMOTE_ONLY']['correct']}/8, fine {counts['refine/REMOTE_ONLY']['correct']}/8. {'A bounded operational capability only within this registered apparatus.' if verdict(model, result) == 'PASS' else 'Do not describe this failed or indeterminate readout as a working capability.'}"
         )
+    lines.append(
+        f"\nStructural encoding is verified in {sum(r['distinct'] for r in result['structure'])}/{len(result['structure'])} rule/seed/grid pairs, with retained P distinct after W0/W1 and unchanged by RESET.\n"
+    )
+    for rule in (2, 3):
+        measured = [
+            r
+            for r in result["trajectories"].values()
+            if r["write"] and r["rule"] == rule and not r["frozen"] and not r["quiet"]
+        ]
+        lines.append(
+            f"R{rule} active WRITE commits change {min(r['edits'] for r in measured)}-{max(r['edits'] for r in measured)} modules across {min(r['neurons'] for r in measured)}-{max(r['neurons'] for r in measured)} neurons. Measured morphology switching work ranges from {min(r['switch_work'] for r in measured):.9f} to {max(r['switch_work'] for r in measured):.9f} mechanical units; negative work means external extraction at the commit. This is separate from the injected energy1 and from energy removed at RESET. All499 actual operation energy budgets are exported in operations.csv.\n"
+        )
     lines += [
-        "\nCalibration-dependent success, when present without raw success, requires the externally stored virgin reference. Template means are fitted externally on four training seeds and frozen; no learning occurs inside the decoder during evaluation. A positive secondary R3 result cannot replace the primary R2 verdict.\n",
+        "\nThe measured R2 calibrated readout passes7/8 on both grids; raw R2 fails4/8. This registered method therefore depends on its externally stored virgin reference; no general impossibility claim is made about other raw readouts. Template means are fitted externally on four training seeds and frozen; no learning occurs inside the decoder during evaluation. A positive secondary R3 result cannot replace the primary R2 verdict.\n",
         f"The preselected seed31/R2/W0 WRITE and two REMOTE reads reproduce {result['repeat']['identical_files']} files byte-for-byte on the same compiler/host; cross-platform bit identity and exhaustive repeatability are not established. All writes start from virgin P; sequential storage is untested.\n",
         "## Exact use and interpretation\n",
         "Build `cargo build --locked --release --bin experiment_0007`. The batch CLI takes `train|evaluate|refine|repeat ROOT`; each stage must be fresh. Run train first, preserve `TRAINING_FROZEN` and the template SHA receipt, then evaluate/refine/repeat without changing features or fitting. Run the independent auditor before interpreting any scientific pass. Complete commands and dependencies are in README.\n",
@@ -410,6 +472,7 @@ def main():
     protocol = json.loads((args.root / "protocol-verification.json").read_text())
     assert protocol["actual_operations"] == 499 and protocol["reuse_identity"]
     result["calibration_refinement"] = protocol["calibration_refinement"]
+    result["refinement_diagnosis"] = protocol["refinement_diagnosis"]
     for trajectory in result["trajectories"].values():
         q7.CHECKED.update(trajectory["frames"])
     make_tables(args.root, result)

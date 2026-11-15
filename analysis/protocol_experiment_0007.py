@@ -125,7 +125,42 @@ def main():
                     pass_gate=max(errors) <= 0.015,
                 )
             )
+    diagnosis = []
+    for case in verified["readout"]["remote_influence"]:
+        if case["numerical_pass"]:
+            continue
+        name = q7.ident(case["seed"], case["rule"], case["symbol"], "WRITE")
+        palettes = [
+            q7.decode(root / stage / name / "post.q7f")["palette"].reshape(4096, 64)
+            for stage in ("evaluate", "refine")
+        ]
+        scores = [
+            np.fromfile(root / stage / name / "scores.f64", "<f8").reshape(4096, 64)
+            for stage in ("evaluate", "refine")
+        ]
+        for site, module in zip(*np.nonzero(palettes[0] != palettes[1]), strict=True):
+            diagnosis.append(
+                dict(
+                    seed=case["seed"],
+                    rule=case["rule"],
+                    symbol=case["symbol"],
+                    site=int(site),
+                    module=int(module),
+                    coarse_palette=int(palettes[0][site, module]),
+                    fine_palette=int(palettes[1][site, module]),
+                    coarse_score=float(scores[0][site, module]),
+                    fine_score=float(scores[1][site, module]),
+                    coarse_floor_eligible=bool(scores[0][site, module] >= 1e-8),
+                    fine_floor_eligible=bool(scores[1][site, module] >= 1e-8),
+                )
+            )
+    if diagnosis:
+        with (tables / "refinement_diagnosis.csv").open("w") as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(diagnosis[0]))
+            writer.writeheader()
+            writer.writerows(diagnosis)
     receipt = dict(
+        refinement_diagnosis=diagnosis,
         calibration_refinement=calibration,
         actual_operations=actual_count,
         reused_trajectories=reuse_count,

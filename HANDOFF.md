@@ -613,32 +613,78 @@ memory,R1 resilience,physical fidelity or generalization from the positive
 structural/trajectory gates. Verify current main/remote SHA and latest hosted CI
 before making a new delivery claim; do not automatically resume old M5-B.
 
-## Experiment 0007 active slice — 2026-11-15
+## Experiment 0007 completed science — 2026-11-15
 
-User directive attachment explicitly authorizes implementation, full frozen
-execution, independent verification, manual/package and commit/push/hosted CI.
-Rehydrated clean main at e3255da. Registration2cc0e00 precedes data; implementation
-and numeric decoder d7f97f0 precede execution. Adapter uses unchanged QR6 Medium,
-with explicit port2183 pulses and QR7 outer operation/port schema. All70 protected
-historical file hashes pass. No old scientific sources/registrations/results edited.
+User directive authorized full registration/interface/execution/verification,
+manual/package and commit/push/hosted CI. Clean baselinee3255da; registration2cc0e00
+preceded data, interface and numeric-only decoderd7f97f0 preceded execution.
+All70 protected historical hashes match; old scientific files/results unchanged.
+No thresholds, inputs, seeds, split, features or decoder were retuned.
 
-Serial matrix currently running under tools exec session21177; do not launch a
-second physics replica or overwrite results/experiment_0007. Training comes first;
-automatic chain freezes templates, then held-out/fine/repeat. Independent auditor
-session11075 follows completed trajectories. Exact original executable is retained
-as results/experiment_0007/registered-runner; EXECUTION_PROVENANCE.json records SHA
-and compiler. Empty initial background launch interrupted before observations,
-retained in launch-interrupted-no-measurements. Successful primary run is foreground.
+688 logical trajectories =496 actual primary (train208/evaluate208/refine80)
+plus192 explicit measured-calibration reuses; preselected repeat adds3 actual,
+499 total. All conditions complete. 2631 full signed primary/repeat checkpoints;
+587059 every-tick mechanical rows. Scientific CPU wall time68.951 minutes.
+Original executable SHA e4d6584f400d29625c142acd224495aca598cfbe155b053e9bc0128622734468
+is retained in results/experiment_0007/registered-runner. Actual eval/fine binaries
+match it. Template SHA receipt predates first held-out parameters; hashes unchanged.
+Initial failed background launch had an empty ledger and no measurements, retained
+separately. All real executions used fresh directories and a serial CPU process.
 
-e39e009 adds independent audit and synthetic state/control tests. Python parser
-corrected configuration enum to0 (heterogeneous); no engine change. Acceptance
-remains per-rule (R3 cannot replace or invalidate R2 through aggregated gating).
-Local34 Rust and24 Python tests pass. Root lint/docs/release checks pass; viewer
-checks underway. Scientific verdict pending; do not infer success from partial data.
+PRIMARY R2 calibrated REMOTE: PASS7/8 both grids, identical predictions, no ties.
+Seed83/W0 is misclassified asW1 on both; training errorseed31/W0 also retained.
+Raw R2 FAIL4/8 both grids. External virgin calibration and external templates are
+required by this successful registered method; no autonomous associative recall.
+R2 full-field error max0.186454%, exact refined palettes8/8, Jaccard1.0; smallest
+calibrated separation/refinement norm ratio1098.5 vs required5. Calibration-field
+max refinement0.186504%. Structural encoding24/24 rule/seed/grid pairs passes.
+Selected seed31/R2/W0 WRITE and two REMOTE reads repeat39 case files byte-for-byte;
+concatenated120-feature file additionally matches. No cross-platform bit claim.
 
-Next: complete496 primary+3 repeat executions; auditor must verify all, reconstruct
-features and frozen models, calculate predeclared margins and separate verdicts.
-Then generate report/manual/figures/tables/palette store; inspect rendered plots;
-build and integrity-check portable ZIPs, copy Downloads, update this handoff with
-measured results, final checks, remote SHA and exact hosted CI. Do not retune a
-failed criterion or convert calibration-dependent discrimination into association.
+R3: operationally INDETERMINATE. Counts calibrated4/8,raw3/8 both grids; no ties.
+Seed71/W0 full-field disagreement3.799194% exceeds1.5%, while reduced-feature margins
+pass. Jaccard0.995169 and7/8 exact palettes do not override failed field accuracy.
+At neuron2168 coarse swaps modules10/18 (colors0/2); fine omits this pair because
+S18=1.0005988752672754e-8 coarse versus9.998688816698261e-9 fine crosses the frozen
+1e-8 eligibility floor. Actual histories/palettes explain the edit discrepancy;
+no counterfactual run attributes all field error solely to it. Threshold unchanged.
+Remote contrast threshold reaches16/16 pairs but validity-qualified causal verdict
+is R2 PASS8/8, R3 indeterminate due that one invalid pair.
+
+Every-tick energy drift max0.036236% vs1%. All equal-energy inputs within1e-12;
+all24 zero exposures exactzero/noedits; frozen writes/read P unchanged. All499
+reset/restore/controller-operation budgets verified and exported. RESET removes
+mechanical energy externally and retains P; RESTORE externally installs virgin P.
+R2 active commits302–392 modules/58–69 neurons, switch work[-.139138668,.190977160];
+R3 286–452 modules/55–63 neurons, work[-.031521719,.123632837]. Not energy-free learning.
+
+Independent Python verified fields/checksums/energies, all local rule decisions,
+probe history quadrature at6 full-module sites, controls/reuse identities, all120
+features, train-only means, all544 predictions, field/feature margins and exact
+repeat. Not a second whole-lattice ODE implementation. Data/manifests/caches remain
+ignored under results/experiment_0007. QR7's body label is constantQR7; full condition
+identity is external ledger/path + SHA. Port/operation/rule/seed/module/dt/tick are
+in each frame. Original reused observations retain CALIBRATE metadata.
+
+Measured report docs/EXPERIMENT_0007_RESULTS.md and manual
+ docs/OPERATIONAL_LATTICE_MANUAL.md, schema,5 actual-data PNGs and source are in Git.
+All plots were rendered/inspected; no new Bevy mode/native window was necessary.
+Local34 Rust/24 Python/3 viewer tests plus format, strictlint, docs/release/compile
+pass. Source85c4e89 hosted CI all4 jobs PASS:
+https://github.com/Cognis-11-Inc/qr-neural-memory-system/actions/runs/43744070082
+
+Final archive/integrity/remote/HEAD-CI delivery status is recorded after this
+results commit in ignored results/experiment_0007/delivery.json and
+ delivery-status.json. Absence of those receipts means those delivery checks are
+pending; do not infer them from source CI. Packages go to /home/cognis/Downloads:
+QR_Neural_Memory_Experiment_0007_Quick_Review.zip, _Data.zip, _Full_Fields.zip.
+DATA+FULL_FIELDS together support full independent re-verification without Bevy;
+QUICK_REVIEW independently reproduces classification/feature margins but cannot
+remeasure whole-field energy. Archive-specific member SHA manifests avoid collisions.
+
+No further registered execution remains. Next research step requires a separate
+registration: threshold-sensitive R3 fixed-palette diagnosis, finer validation,
+or new readouts. Do not tune on held-out cases or infer capacity, sequential writes,
+interference, damage resilience, intelligence, Principle 002 as established law,
+or the distributed associative retrieval demanded by Principle001. Old0004/0005
+numerical failures and deferred historical experiments remain unchanged.

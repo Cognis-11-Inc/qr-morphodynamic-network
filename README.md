@@ -297,3 +297,11 @@ is60–80 minutes and signed-field storage roughly12GB. Viewer-free review/data
 and full-field companion archives carry member SHA manifests. Scientific results
 and the measured Operational Lattice Manual are generated only after the full
 independent verification completes.
+
+[Measured Experiment 0007 results](docs/EXPERIMENT_0007_RESULTS.md): R2 calibrated
+REMOTE readout passes7/8 on both registered grids; raw R2 fails4/8. R3 remains
+operationally indeterminate after a3.799% full-field refinement failure against
+1.5%, despite stable reduced features. Structural encoding and the selected
+repeat pass. This is calibration-dependent discrimination, not associative recall.
+The [Operational Lattice Manual](docs/OPERATIONAL_LATTICE_MANUAL.md) records exact
+operations, measured energy costs, reproducibility and failed capabilities.
