@@ -696,51 +696,101 @@ interference, damage resilience, intelligence, Principle 002 as established law,
 or the distributed associative retrieval demanded by Principle001. Old0004/0005
 numerical failures and deferred historical experiments remain unchanged.
 
-## Experiment 0008 active slice — 2026-11-15
+## Experiment 0008 completed science — 2026-11-15
 
-User directive: energy distribution/information propagation, frozen P, no memory
-or learning objective. Baselinebf92f24 clean. Registration8e74e54 before data;
-implementation and fixed method325fe77 before new-seed runs.125 baseline tracked
-hashes protected except shared README/HANDOFF/index/lib exports. Nothing historical
-scientific is edited. Read exact EXPERIMENT_0008.md and REGIONS.json, not this
-handoff alone. Four equal-E1 single signs/modules, AB+/AB-, ZERO, necessary
-independent B27+ =64coarse+32fine+1repeat=97 actual executions, zero reuses.
+User directive: energy-distribution/information propagation, frozen P; not learning
+or retrieval. Clean baselinebf92f24. Registration8e74e54 before data, implementation
+and frozen measurement method325fe77 before new-seed runs. Protected125 baseline
+tracked hashes all match; old scientific sources/verdicts/data unchanged. Shared
+README/HANDOFF/index/lib exports are allowed exceptions. No registered feature,
+threshold, seed, input, equation or method was changed after execution.
 
-Current foreground engine session49978 uses copied original executable under
-results/experiment_0008/registered-runner: train -> Python external-reference fit
-(awaits independent TRAIN_READY) -> evaluate -> refine -> repeat. Auditor session
-73416 follows completed trajectories, reconstructs full module energy independently,
-exports numeric-only features and final P1..P6. All32 train already independently
-verified;404 reference pairs frozen before held-out runs. Primary held-out stage
-nearing completion at last update. Do not rerun or overwrite a stage. Templates
-and measurement source must stay immutable. Source-bound audit cache binds inputs.
+97 actual executions: reference32+held-out32+fine32+repeat1 (64 primary,32 fine,1repeat).
+No reuses, no synthetic negative runs, no failures/unexecuted cases. Fresh reference
+101/103/107/109, held127/131/137/139. Signals S9p/S27p/S9m/S27m,ABp/ABm,ZERO,
+necessary independent B27p basis added pre-registration. E0=1 nonzero; no forcing,
+no adaptation, no history. dt.025/.0125, horizon32. Copied executable remains at
+results/experiment_0008/registered-runner, original SHA/compiler/source in
+EXECUTION_PROVENANCE.json. All404 external reference pairs frozen after training
+independent audit and before first held-out parameters; timestamps/SHA verified.
 
-Fresh seeds reference101/103/107/109; held127/131/137/139. All signals time32,
-dt.025 and all-held fine.0125. Repeatseed107/ABm. Original executable SHA/compiler
-in EXECUTION_PROVENANCE.json; always invoke copied runner, not rebuilt target.
-Old QR6 constructors support B/dual initial states, but QR7's narrow write/read
-operator is not repurposed. Root physics unchanged. New QR8 wrapper never adapts.
+582 actual full QR8 signed/energy records (P,u,v,K,Q),165217 every-tick mechanical
+rows;10 regional streams and50 fixed signed/energy probes per tick. Scientific
+physics wall time13.824867 minutes. Per-neuron mechanical/motion arrays at all582
+checkpoints and initial/P2 component tables are exported. No interpolation.
+Body label is the COMPLETE physical condition ID; explicit A/B ports/amplitudes
+in QR8 outer schema. No old QR6/QR7 schema/port/caller semantics widened.
 
-Half-edge total energies and K+onsite motion are distinct. Adjacent cells have
-allocated edge energy at0 without motion; primary propagation uses motion>=1e-8.
-A shells versus min-distance-to-both F shells distinct; BOTH source IDs excluded
-from decoding. Six geometry-only probes everywhere, not data-picked. Readout
-pairsLOC/SIGN9/SIGN27/DUAL; G global, SH region sums, T/U matched budgets, KP/UV
-matched double budgets; cross excludes9/27.404 fixed reference means; no calibration
-subtraction or per-frame normalization. Information gates>=7/8 both grids,
-no ties/same predictions,1.5% full-field,5% feature refinement, S>=5D plus absolute
-floors1e-8 energy/1e-6 signed. Failed energy sign discrimination is expected.
+SEPARATE VERDICTS:
+P1 PASS80/80 A-input/shell comparisons: motion reaches1,2,3,4,6 in order; fine
+arrival/peak gates pass. Motion excludes half-edge initial allocations, so t0
+neighbor potential energy is not falsely called transport.
+P2 FAIL0/24 joint criteria: maximum participation6.875909<8 across all registered
+held-out checkpoints/both grids. Many weak receiver responses and internal-module
+motion exist; energy stays concentrated in a few dominant neurons. Do not report
+no propagation or no redistribution whatsoever from this strict gate failure.
+P3 LOC spatial total-energy T: A2 PASS8/8,A4 PASS8/8 on BOTH grids; A4 cross
+(excludes9/27) also8/8. Global energy only6/8 FAIL. A6 FAIL6/8 and minimum
+separation2.74e-12<1e-8 floor. Energy reaches6 but this readout is not useful there.
+Raw signed UV forLOC A4 yields6/8 FAIL. Different fixed readout performance is not
+a universal information ordering; energy is a physics-defined quadratic feature.
+P4 PASS: quadratic energy inversion invariance and odd signed fields verified.
+Energy-only sign readouts have8 ambiguous held-out cases each (0correct), while
+UV sign9/sign27 at A2/A4 gives8/8 all/cross on both grids. No phase selected posthoc.
+P5 DUAL spatial-energy T: F2 FAIL5/8,F4 FAIL4/8,F6 FAIL4/8. F regions are beyond
+BOTH sources; no near-source proxy. Signed UV F2 secondary PASS8/8(all),7/8(cross),
+but F4 FAIL4/8(all),5/8(cross). Global DUAL energy INDETERMINATE: tiny contrast
+fails numerical-separation margin. Do not rescue primary failure with a different
+representation or near region. Ordinary linear interference is not emergence.
+P6 PASS: max all-tick energy drift0.03582929% vs1%, max full signed-field refinement
+0.20657201% vs1.5%; exact zero/frozen P. Signed superposition max7.24933561e-15
+vs1e-12 using independent appropriately amplitude-scaled A/B bases, not1/sqrt2
+or added energies.24 sign controls have byte-identical energy streams. Selected
+seed107/ABm repeat matches all11 case files byte-for-byte on same host/compiler.
+No overall P1..P6 success score, population inference or physical-material claim.
 
-New2 Rust/4 Python fixtures passed, strict root Clippy and Ruff pass; full quality
-checks/delivery remain. New report and package scripts are ready but not yet run
-on completed data. They export all404 model rows and9696 predictions,7 measured
-figures, P1/P2/P3-by-distance/P4/P5-by-distance/P6 separately. No new Bevy mode.
+404 fixed external model rows,9696 predictions, all distances/margins/ambiguities
+and negative outcomes exported. G5 scalars; SH5region sums; T/U1920(all)1860(cross),
+KP/UV3840(all)3720(cross). Six geometry-only probes per region, no data-picked
+locations or near/far pooling. Raw unscaled features; no calibration subtraction,
+learned internal network, targets/rewards or palette encoding. Numeric vectors
+contain no labels/seed/P/condition metadata. Coarse references reused unchanged
+on fine data. All exact methodology source files remain byte-identical to325fe77.
 
-Next bounded steps: finish97 cases and independent verification, inspect all
-verdicts/failures and real PNGs, generate report/complete tables, fresh standalone
-numeric review/source build and all archive CRC/member/copy SHA checks. Package
-all tracked sources (including compile-time docs, geometry JSON, fixtures) so
-source extraction works without Git/viewer. Complete local quality checks, final
-HANDOFF/README/index, commit/push/remote SHA/exact HEAD CI, copy Downloads. Do not
-retune failed gates or infer memory, capacity, nonlinear emergence or physical
-energy transfer solely from a propagated signal. No registered outcomes retuned.
+Independent Python reconstructs full module half-edge energies from P/u/v using
+tensor slices, validates shell/probe/global checkpoints, samples timelines and
+fractions, rederives frozen geometry, features, references, predictions, numerical
+margins and verdicts. Every-tick aggregates are engine observations checked at
+full checkpoints; not a second full ODE integration or full state every tick.
+Full metadata/protected hashes/source-bound caches/root source/math snapshots
+are retained. Energy arrival versus actual motion and usable discrimination are
+separate. ROOT/regions.json equals the frozen registration. No integrated edge
+transfer amount is inferred from net power. Palette structure never changes.
+
+Measured report docs/EXPERIMENT_0008_RESULTS.md, schema, frozen regions, source,
+seven actual-data PNGs (fixed energy/signed scales, no per-frame normalization),
+README/index are in Git. All rendered PNGs inspected; no new viewer/native window
+needed. Existing spacing1.8/iGPU defaults unchanged. NVIDIA unused by experiment.
+Local36 Rust/28 Python/3 viewer tests, strict lint/format, docs/release/doctests/
+Python compile all pass. Sourcee7b97be all4 hosted jobs PASS:
+https://github.com/Cognis-11-Inc/qr-neural-memory-system/actions/runs/43762981055
+
+Final archive/extraction/copy-integrity/remote/exact HEAD-CI evidence is written
+AFTER this results commit in ignored results/experiment_0008/delivery.json and
+ delivery-status.json. Missing receipts mean delivery checks remain pending.
+Packages: QR_Neural_Memory_Experiment_0008_Quick_Review.zip, _Data.zip,
+_Full_Fields.zip copied to /home/cognis/Downloads. Source snapshot includes ALL
+tracked files, including embedded legacy Markdown, geometry JSON and test fixtures.
+Portable numeric review recomputes references/classification/margins without
+viewer/full fields; DATA+FULL_FIELDS supports fresh complete physical auditing.
+CRC/member/copy SHA checks and clean extraction build/test/provenance path are
+required before claiming delivery. Archive-specific manifests avoid collisions.
+
+No registered execution remains. Future experiments require new registration;
+do not optimize new features on these held-out cases. Possible questions are
+stronger transport (with explicit design discussion), different reference readout,
+longer validated horizon, or causally isolating morphology/disorder effects.
+Current failures remain frozen. Do not infer learned association, capacity,
+resilience, nonlinear emergence or Principle002 as experimentally established law.
+Earlier QR4/QR5 timestep failures and QR7 R3 failure remain unchanged. Principle 002
+is a proposed mechanism, not an experimentally established law.

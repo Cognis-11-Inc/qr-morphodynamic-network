@@ -320,6 +320,7 @@ have separate verdicts. Use a fresh root and the same compiled executable:
 cargo build --locked --release --bin experiment_0008
 mkdir -p results/my-0008
 cp target/release/experiment_0008 results/my-0008/registered-runner
+.venv/bin/python -m analysis.package_experiment_0008 results/my-0008 --record-provenance results/my-0008/registered-runner
 results/my-0008/registered-runner train results/my-0008
 # In a second terminal; performs independent analysis, never physics updates:
 .venv/bin/python -m analysis.audit_experiment_0008 results/my-0008 --follow
@@ -343,3 +344,12 @@ refinement, absolute detectability, numerical separation and classifier gates
 are independent. Never interpret energy reaching a shell as proof that its
 input remains distinguishable there. `--fresh` forces full independent auditing.
 Portable source includes all embedded specifications, geometry JSON and fixtures.
+
+[Experiment 0008 measured results](docs/EXPERIMENT_0008_RESULTS.md): equal-energy
+module9/27 inputs are distinguishable from spatial energy at4 hops (8/8 held-out
+on both grids), including channels outside9/27. Global energy reaches6/8; spatial
+energy at6 hops fails. Energy is invariant under complete sign inversion, while
+signed UV resolves sign at2/4 hops. Registered broad-participation and dual-energy
+discrimination gates fail. P1/P4/P6 pass; no overall success score or memory claim.
+All97 cases,582 signed/energy checkpoints,404 readout models and9696 predictions
+are retained with complete negative/ambiguous and numerical evidence.

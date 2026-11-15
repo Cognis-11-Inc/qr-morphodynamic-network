@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import shutil
+import subprocess
 from pathlib import Path
 
 from analysis.package_experiment_0007 import sha, source_metadata, write_zip
@@ -31,7 +32,7 @@ FULL_FIELDS together into one directory, then run:
 From QUICK_REVIEW, the first command reproduces all404 references/readouts without
 full fields. To validate original data checksums: cd data and run
 `sha256sum -c ../RAW_SHA256SUMS.txt` after extracting both companion archives.
-The independent auditor reconstructs energy/rules/regions from actual fields;
+The independent auditor reconstructs energy/regions from actual fields;
 checksum checks alone do not establish physical or information verdicts.
 
 To reproduce physics, build `cargo build --locked --release --bin experiment_0008`.
@@ -61,9 +62,30 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path)
     parser.add_argument("--downloads", type=Path)
+    parser.add_argument("--record-provenance", type=Path, metavar="EXECUTABLE")
     parser.add_argument("--reuse-full-fields", action="store_true")
     args = parser.parse_args()
     root = args.root
+    if args.record_provenance:
+        root.mkdir(parents=True, exist_ok=True)
+        target = root / "EXECUTION_PROVENANCE.json"
+        if target.exists():
+            raise FileExistsError(target)
+        target.write_text(
+            json.dumps(
+                dict(
+                    schema=1,
+                    registration="8e74e54",
+                    source_head=source_metadata()[1],
+                    executable_sha256=sha(args.record_provenance),
+                    compiler=subprocess.check_output(["rustc", "-Vv"]).decode(),
+                    planned=dict(train=32, evaluate=32, refine=32, repeat=1),
+                ),
+                indent=2,
+            )
+            + "\n"
+        )
+        return
     assert (root / "verification.json").exists()
     output = root / "packages"
     output.mkdir(exist_ok=True)
@@ -77,7 +99,7 @@ def main():
     )
     (root / "source-integrity.json").write_text(json.dumps(manifests, indent=2) + "\n")
     common = [(p, str(p)) for p in sources]
-    for name in ("tables", "features", "models"):
+    for name in ("tables", "features", "models", "spatial"):
         common.extend(
             (p, "data/" + str(p.relative_to(root)))
             for p in sorted((root / name).rglob("*"))
