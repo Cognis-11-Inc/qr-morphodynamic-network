@@ -16,6 +16,7 @@ def sha(path):
 
 def write_zip(path, members, extra=None):
     manifest = []
+    manifest_name = path.stem + "_SHA256SUMS.txt"
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED, compresslevel=3) as archive:
         for source, name in sorted(members, key=lambda entry: entry[1]):
             archive.write(source, name)
@@ -24,11 +25,11 @@ def write_zip(path, members, extra=None):
             for name, content in extra.items():
                 archive.writestr(name, content)
                 manifest.append(f"{hashlib.sha256(content.encode()).hexdigest()}  {name}\n")
-        archive.writestr("SHA256SUMS.txt", "".join(manifest))
+        archive.writestr(manifest_name, "".join(manifest))
     # CRC plus independently streamed member SHA for every archived member.
     with zipfile.ZipFile(path) as archive:
         assert archive.testzip() is None
-        for line in archive.read("SHA256SUMS.txt").decode().splitlines():
+        for line in archive.read(manifest_name).decode().splitlines():
             digest, name = line.split("  ", 1)
             with archive.open(name) as stream:
                 assert hashlib.file_digest(stream, "sha256").hexdigest() == digest, name
@@ -147,7 +148,8 @@ def main():
 
 Start with docs/EXPERIMENT_0007_RESULTS.md and docs/OPERATIONAL_LATTICE_MANUAL.md.
 All linked figures are included. No viewer, GPU or Bevy is required.
-SHA256SUMS.txt binds each ZIP member. RAW_SHA256SUMS.txt binds every original
+Each archive has its own named *_SHA256SUMS.txt binding every ZIP member.
+RAW_SHA256SUMS.txt binds every original
 trajectory/history/probe/field/derived audit input. Integrity is not authenticity.
 
 QUICK_REVIEW contains every classification/metric/parameter/reset/reuse record,
@@ -168,6 +170,9 @@ refine, repeat in that order in a NEW root. See README for exact commands.
 Run `.venv/bin/python -m analysis.review_experiment_0007 data` for an independent
 reproduction of classification and feature margins from QUICK_REVIEW. To force
 fresh full-data verification, move data/audit aside before running the auditor.
+After extracting DATA and FULL_FIELDS together, validate all original data with
+`cd data; sha256sum -c ../RAW_SHA256SUMS.txt`. Each archive-specific member
+manifest remains separate when both archives are extracted to one directory.
 Reduced review cannot independently recompute whole-field energy/refinement;
 that requires FULL_FIELDS. Stored verdicts are distinguished from remeasurement.
 Frozen legacy scientific files are source dependencies, not new experiment data.
