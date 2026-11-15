@@ -673,6 +673,13 @@ Local34 Rust/24 Python/3 viewer tests plus format, strictlint, docs/release/comp
 pass. Source85c4e89 hosted CI all4 jobs PASS:
 https://github.com/Cognis-11-Inc/qr-neural-memory-system/actions/runs/43744070082
 
+Portable source-build smoke caught six omitted compile-time legacy Markdown
+inputs. The archive builder now includes all tracked root/docs Markdown and
+tracked test fixtures, deduplicates shared members, and uses archived source
+metadata when Git is absent. The classifier already reproduced from extraction;
+the corrected archives receive fresh extraction/build checks in delivery-status.
+Initial archive receipts are retained as delivery-initial-package.json.
+
 Final archive/integrity/remote/HEAD-CI delivery status is recorded after this
 results commit in ignored results/experiment_0007/delivery.json and
  delivery-status.json. Absence of those receipts means those delivery checks are

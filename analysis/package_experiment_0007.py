@@ -14,9 +14,25 @@ def sha(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def source_metadata():
+    """Use local Git only at a checkout root; otherwise use the archived manifest."""
+    if Path(".git").exists():
+        files = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
+        head = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+        return files, head
+    manifest = json.loads(Path("source-integrity.json").read_text())
+    return list(manifest["sources"]), manifest["head"]
+
+
 def write_zip(path, members, extra=None):
     manifest = []
     manifest_name = path.stem + "_SHA256SUMS.txt"
+    unique = {}
+    for source, name in members:
+        if name in unique and unique[name] != source:
+            raise ValueError("conflicting archive member: " + name)
+        unique[name] = source
+    members = [(source, name) for name, source in unique.items()]
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED, compresslevel=3) as archive:
         for source, name in sorted(members, key=lambda entry: entry[1]):
             archive.write(source, name)
@@ -40,6 +56,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path)
     parser.add_argument("--downloads", type=Path)
+    parser.add_argument("--reuse-full-fields", action="store_true")
     parser.add_argument("--record-provenance", type=Path, metavar="EXECUTABLE")
     args = parser.parse_args()
     root = args.root
@@ -50,7 +67,7 @@ def main():
             raise FileExistsError(destination)
         provenance = dict(
             executable_sha256=sha(args.record_provenance),
-            source_head=subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip(),
+            source_head=source_metadata()[1],
             toolchain=subprocess.check_output(["rustc", "-Vv"]).decode(),
             scope="recorded before execution; caller must use these executable bytes unchanged",
         )
@@ -59,13 +76,14 @@ def main():
     assert (root / "verification.json").exists()
     output = root / "packages"
     output.mkdir(exist_ok=True)
-    tracked = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
+    tracked, source_head = source_metadata()
     sources = [
         Path(p)
         for p in tracked
         if p
         and (
-            p.startswith(("src/", "analysis/"))
+            p.startswith(("src/", "analysis/", "tests/"))
+            or (p.endswith(".md") and ("/" not in p or p.startswith("docs/")))
             or p
             in (
                 "Cargo.toml",
@@ -113,7 +131,7 @@ def main():
         )
     ]
     provenance = dict(
-        head=subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip(),
+        head=source_head,
         registration="2cc0e00",
         implementation="d7f97f0",
         sources={str(p): sha(p) for p in sources},
@@ -192,13 +210,36 @@ Frozen legacy scientific files are source dependencies, not new experiment data.
             {"PORTABLE_README.md": instructions},
         )
     )
-    receipts.append(
-        write_zip(
-            output / "QR_Neural_Memory_Experiment_0007_Full_Fields.zip",
-            fields,
-            {"PORTABLE_README.md": instructions},
+    full_path = output / "QR_Neural_Memory_Experiment_0007_Full_Fields.zip"
+    if args.reuse_full_fields:
+        manifest_name = full_path.stem + "_SHA256SUMS.txt"
+        expected = {name: sha(source) for source, name in fields}
+        expected["PORTABLE_README.md"] = hashlib.sha256(instructions.encode()).hexdigest()
+        with zipfile.ZipFile(full_path) as archive:
+            assert archive.testzip() is None
+            actual = {}
+            for line in archive.read(manifest_name).decode().splitlines():
+                digest, name = line.split("  ", 1)
+                with archive.open(name) as stream:
+                    assert hashlib.file_digest(stream, "sha256").hexdigest() == digest
+                actual[name] = digest
+            assert actual == expected
+        receipts.append(
+            dict(
+                file=full_path.name,
+                bytes=full_path.stat().st_size,
+                sha256=sha(full_path),
+                members=len(expected),
+            )
         )
-    )
+    else:
+        receipts.append(
+            write_zip(
+                output / "QR_Neural_Memory_Experiment_0007_Full_Fields.zip",
+                fields,
+                {"PORTABLE_README.md": instructions},
+            )
+        )
     if args.downloads:
         args.downloads.mkdir(exist_ok=True)
         for receipt in receipts:
