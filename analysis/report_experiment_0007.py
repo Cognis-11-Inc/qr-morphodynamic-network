@@ -150,6 +150,43 @@ def plots(root, result, figures):
         fig.colorbar(image, ax=axes[ri, :], label="edited modules (sum over z)", shrink=0.75)
     fig.savefig(figures / "experiment_0007_structure.png")
     plt.close(fig)
+    from matplotlib.colors import ListedColormap
+    from matplotlib.patches import Rectangle
+
+    fig, axes = plt.subplots(2, 3, figsize=(9, 6), constrained_layout=True)
+    cmap = ListedColormap(["#171923", "#e84146", "#43b66c", "#437ae0", "#efc745"])
+    virgin = q7.checkpoint(root / "evaluate", "s59_CALIBRATE_p9", 0)["palette"]
+    for ri, rule in enumerate((2, 3)):
+        palettes = [virgin] + [
+            q7.decode(root / "evaluate" / q7.ident(59, rule, symbol, "WRITE") / "post.q7f")[
+                "palette"
+            ]
+            for symbol in (0, 1)
+        ]
+        for col, palette in enumerate(palettes):
+            image = axes[ri, col].imshow(palette[2184], cmap=cmap, vmin=-0.5, vmax=4.5)
+            for row, column in zip(*np.nonzero(palette[2184] != virgin[2184]), strict=True):
+                axes[ri, col].add_patch(
+                    Rectangle(
+                        (column - 0.5, row - 0.5), 1, 1, fill=False, edgecolor="white", lw=1.5
+                    )
+                )
+            axes[ri, col].set(
+                title=f"R{rule} neuron2184: {['virgin', 'W0', 'W1'][col]}",
+                xticks=range(8),
+                yticks=range(8),
+                xlabel="module column",
+                ylabel="module row",
+            )
+    fig.colorbar(
+        image,
+        ax=axes,
+        ticks=range(5),
+        label="persistent palette value; white outline = actual edit",
+        shrink=0.75,
+    )
+    fig.savefig(figures / "experiment_0007_palettes.png")
+    plt.close(fig)
     fig, axes = plt.subplots(2, 2, figsize=(11, 7), constrained_layout=True)
     for ri, rule in enumerate((2, 3)):
         for grid, style in (("evaluate", "-"), ("refine", "--")):
@@ -267,6 +304,7 @@ def report(root, result):
         "Templates use REMOTE training seeds7,19,31,43 only; held-out59,71,83,97 never enter fitting. Calibration subtracts each seed's separately measured virgin response. No standardization, scaling, pruning or normalization. Two class means, squared Euclidean distance; ties at1e-12 relative tolerance count as incorrect. Raw has its own training means. Labels are compared only after prediction. Numeric feature files contain no label, seed, palette, condition or eligibility data. Source-level API isolation and independent reconstruction support this boundary; this is not a formal information-flow proof.\n",
         "## Structure and causal controls\n",
         "![Actual spatial edit counts](figures/experiment_0007_structure.png)\n",
+        "![Actual output-neuron palettes](figures/experiment_0007_palettes.png)\n",
         "The plotted maps are actual seed59 edits summed over z, not activity magnitude. Every neuron owns its palette. Full before/after palettes and edit ledgers are exported; per-neuron edit cap8 and all R3 histogram identities were independently checked. SHUFFLED preserves actual edited count per neuron and edited neuron IDs/distances; R3 additionally preserves each color histogram. R2 does not promise histogram matching; shuffled R3 swaps need not be adjacent. Both ports are restored in REMOTE_ONLY.\n",
         "![Signed remote response](figures/experiment_0007_signed_read.png)\n",
         "![Control classifications](figures/experiment_0007_controls.png)\n",
@@ -340,7 +378,7 @@ def manual(result):
         "| Operation | Required state and exact input | Verified observable result | Energy and limits |",
         "|---|---|---|---|",
         "| CALIBRATE | Virgin backup P; complete reset. Pulse2183/module9 then separate reset/pulse27; E1, integrate32 each, plasticity off | Two measured signed reference responses,120 components retained externally | Each pulse injects mechanical energy1. Damping removes energy; observed drift below1%. Reference is external apparatus |",
-        "| WRITE | Externally restored virgin P and zero transients. W0=2182/module9, W1=2182/module27, E1, integrate8, single R2/R3 commit | Actual distinct persistent W0/W1 palettes; full histories, eligibility and edits exported | Commit changes stiffness/couplings and carries explicit external switching work; it is not energy-free learning. One write only |",
+        "| WRITE | Externally restored virgin P and zero transients. W0=2182/module9, W1=2182/module27, E1, integrate8, single R2/R3 commit | Actual committed P and full histories, eligibility and edits; structural distinction judged separately | Commit changes stiffness/couplings and carries explicit external switching work; it is not energy-free learning. One write only |",
         "| RESET | Any retained P; no excitation | Exact zero u,v,V,H,tick and audit accounts; P retained byte-for-byte | Clears residual mechanical activity and accounting; removed energy is an external intervention, not forgetting or passive damping |",
         "| READ | RESET retained P. Fixed pulses2183/modules9 then27, separate resets; E1 each; integrate32, plasticity disabled | Signed u/v at2184/85/86 modules9/27 at .8/3.2/8/16/32; P unchanged | Matching amplitude depends on measured morphology stiffness by the same formula for all symbols. Label must never select pulse, sampling or amplitude policy |",
         "| RESTORE | Explicit external virgin backup from the same seed/body | Subsequent WRITE begins at exactly the original virgin palette | RESET before/after installation. This externally replaces structure; intrinsic erasure/forgetting is not established |",
@@ -377,7 +415,7 @@ def main():
     plots(args.root, result, Path("docs/figures"))
     report(args.root, result)
     manual(result)
-    print("Generated measured report, manual, tables, palette store and four scientific figures")
+    print("Generated measured report, manual, tables, palette store and five scientific figures")
 
 
 if __name__ == "__main__":
