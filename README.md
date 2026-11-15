@@ -272,6 +272,7 @@ target/release/experiment_0007 evaluate results/my-0007
 target/release/experiment_0007 refine results/my-0007
 target/release/experiment_0007 repeat results/my-0007
 .venv/bin/python -m analysis.audit_experiment_0007 results/my-0007
+.venv/bin/python -m analysis.protocol_experiment_0007 results/my-0007
 .venv/bin/python -m analysis.review_experiment_0007 results/my-0007
 .venv/bin/python -m pip install -r requirements-plots.txt
 .venv/bin/python -m analysis.report_experiment_0007 results/my-0007

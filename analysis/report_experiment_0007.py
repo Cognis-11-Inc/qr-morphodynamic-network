@@ -361,6 +361,8 @@ def main():
     parser.add_argument("root", type=Path)
     args = parser.parse_args()
     result = json.loads((args.root / "verification.json").read_text())
+    protocol = json.loads((args.root / "protocol-verification.json").read_text())
+    assert protocol["actual_operations"] == 499 and protocol["reuse_identity"]
     for trajectory in result["trajectories"].values():
         q7.CHECKED.update(trajectory["frames"])
     make_tables(args.root, result)

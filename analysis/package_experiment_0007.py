@@ -102,7 +102,12 @@ def main():
     ]
     common += [
         (root / name, "data/" + name)
-        for name in ("verification.json", "TRAINING_SHA256.txt", "EXECUTION_PROVENANCE.json")
+        for name in (
+            "verification.json",
+            "TRAINING_SHA256.txt",
+            "EXECUTION_PROVENANCE.json",
+            "protocol-verification.json",
+        )
     ]
     provenance = dict(
         head=subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip(),
@@ -153,6 +158,7 @@ Extract DATA and FULL_FIELDS into the same directory for full re-verification:
     python -m venv .venv
     .venv/bin/python -m pip install -r requirements-analysis.txt
     .venv/bin/python -m analysis.audit_experiment_0007 data
+    .venv/bin/python -m analysis.protocol_experiment_0007 data
 
 To reproduce the engine (CPU, deterministic serial, ~one hour): build with
 `cargo build --locked --release --bin experiment_0007`, then run train, evaluate,
