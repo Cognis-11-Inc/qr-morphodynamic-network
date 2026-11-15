@@ -612,3 +612,33 @@ plasticity, retrieval/usefulness or neuron-level necessity tests. Do not infer
 memory,R1 resilience,physical fidelity or generalization from the positive
 structural/trajectory gates. Verify current main/remote SHA and latest hosted CI
 before making a new delivery claim; do not automatically resume old M5-B.
+
+## Experiment 0007 active slice — 2026-11-15
+
+User directive attachment explicitly authorizes implementation, full frozen
+execution, independent verification, manual/package and commit/push/hosted CI.
+Rehydrated clean main at e3255da. Registration2cc0e00 precedes data; implementation
+and numeric decoder d7f97f0 precede execution. Adapter uses unchanged QR6 Medium,
+with explicit port2183 pulses and QR7 outer operation/port schema. All70 protected
+historical file hashes pass. No old scientific sources/registrations/results edited.
+
+Serial matrix currently running under tools exec session21177; do not launch a
+second physics replica or overwrite results/experiment_0007. Training comes first;
+automatic chain freezes templates, then held-out/fine/repeat. Independent auditor
+session11075 follows completed trajectories. Exact original executable is retained
+as results/experiment_0007/registered-runner; EXECUTION_PROVENANCE.json records SHA
+and compiler. Empty initial background launch interrupted before observations,
+retained in launch-interrupted-no-measurements. Successful primary run is foreground.
+
+e39e009 adds independent audit and synthetic state/control tests. Python parser
+corrected configuration enum to0 (heterogeneous); no engine change. Acceptance
+remains per-rule (R3 cannot replace or invalidate R2 through aggregated gating).
+Local34 Rust and24 Python tests pass. Root lint/docs/release checks pass; viewer
+checks underway. Scientific verdict pending; do not infer success from partial data.
+
+Next: complete496 primary+3 repeat executions; auditor must verify all, reconstruct
+features and frozen models, calculate predeclared margins and separate verdicts.
+Then generate report/manual/figures/tables/palette store; inspect rendered plots;
+build and integrity-check portable ZIPs, copy Downloads, update this handoff with
+measured results, final checks, remote SHA and exact hosted CI. Do not retune a
+failed criterion or convert calibration-dependent discrimination into association.

@@ -251,3 +251,48 @@ are accounted for as168 executions plus22 explicit reuses, with a separate repea
 .venv/bin/python -m analysis.report_experiment_0006 results/my-0006 docs/EXPERIMENT_0006_RESULTS.md
 .venv/bin/python -m analysis.package_experiment_0006 results/my-0006 --native results/0006-native --repeat results/my-0006-repeat
 ```
+
+## Experiment 0007: bounded operations and held-out readout
+
+The [frozen registration](EXPERIMENT_0007.md) fixes CALIBRATE/WRITE/RESET/READ/
+RESTORE, two write modules, a label-independent two-pulse read, eight causal
+controls, numeric-only nearest-template decoding, and all held-out fine cases.
+QR6 physics and earlier scientific files remain unchanged. The external virgin
+reference and training templates are apparatus, not lattice memory. See the
+[QR7 schema](docs/EXPERIMENT_0007_SCHEMA.md).
+
+Execute serially in a **new** root; each stage refuses to overwrite its folder:
+
+```sh
+cargo build --locked --release --bin experiment_0007
+.venv/bin/python -m analysis.package_experiment_0007 results/my-0007 --record-provenance target/release/experiment_0007
+target/release/experiment_0007 train results/my-0007
+sha256sum results/my-0007/train/template*.f64 > results/my-0007/TRAINING_SHA256.txt
+target/release/experiment_0007 evaluate results/my-0007
+target/release/experiment_0007 refine results/my-0007
+target/release/experiment_0007 repeat results/my-0007
+.venv/bin/python -m analysis.audit_experiment_0007 results/my-0007
+.venv/bin/python -m analysis.review_experiment_0007 results/my-0007
+.venv/bin/python -m pip install -r requirements-plots.txt
+.venv/bin/python -m analysis.report_experiment_0007 results/my-0007
+```
+
+The auditor may follow the serial engine with `--follow` in another terminal;
+it performs analysis only, never parallel physics updates. Caches bind verifier
+source and every input SHA; move `ROOT/audit` aside to force fresh recomputation.
+The small `review` command independently reconstructs classification and feature
+margins using numeric observations; it does not recheck full-field energy/rules.
+A failed scientific readout is a completed experiment, not a reason to retune.
+Full package creation additionally expects `EXECUTION_PROVENANCE.json` recording
+the actual executable/compiler/source identities:
+
+```sh
+.venv/bin/python -m analysis.package_experiment_0007 results/my-0007 --downloads /home/cognis/Downloads
+```
+
+The complete matrix has688 logical trajectories:496 actual plus192 explicit
+calibration reuses, with3 separate repeat executions. Estimated serial CPU time
+is60–80 minutes and signed-field storage roughly12GB. Viewer-free review/data
+and full-field companion archives carry member SHA manifests. Scientific results
+and the measured Operational Lattice Manual are generated only after the full
+independent verification completes.
