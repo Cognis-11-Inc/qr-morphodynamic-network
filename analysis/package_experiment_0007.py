@@ -107,6 +107,8 @@ def main():
             "TRAINING_SHA256.txt",
             "EXECUTION_PROVENANCE.json",
             "protocol-verification.json",
+            "local-checks.json",
+            "numeric-review.json",
         )
     ]
     provenance = dict(
