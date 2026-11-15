@@ -384,6 +384,51 @@ mod tests {
         assert!(decoder.predict(&[f64::NAN; DIM]).is_err());
     }
     #[test]
+    fn synthetic_control_provenance_and_state_transitions() {
+        let mut op = Operator::new(12345, 0.025, 2).unwrap();
+        // Explicit synthetic control fixture, never a measured write outcome.
+        let before = op.virgin.clone();
+        let mut after = before.clone();
+        for id in [2182, 2183, 2184] {
+            after[id][9] = (after[id][9] + 1) % 5;
+        }
+        let fixture = Outcome {
+            before: before.clone(),
+            after: after.clone(),
+            seed: 12345,
+            rule: 2,
+        };
+        op.control(&fixture, "REMOTE_ONLY").unwrap();
+        assert_eq!(op.body.state.palette[2182], before[2182]);
+        assert_eq!(op.body.state.palette[2183], before[2183]);
+        assert_eq!(op.body.state.palette[2184], after[2184]);
+        assert!(op.read(27, true).is_err());
+        assert!(op.write(0, false).is_err());
+        op.read(27, false).unwrap();
+        op.advance().unwrap();
+        assert!(op.body.history().iter().all(|x| *x == 0.));
+        assert!(op.body.shape_history().iter().all(|x| *x == 0.));
+        assert!(op.control(&fixture, "ALL").is_err());
+        op.restore().unwrap();
+        assert_eq!(op.body.state.palette, before);
+        assert!(op.control(&fixture, "UNKNOWN").is_err());
+        let other = Outcome {
+            before,
+            after,
+            seed: 999,
+            rule: 2,
+        };
+        assert!(op.control(&other, "ALL").is_err());
+        op.write(0, true).unwrap();
+        // Synthetic clock fixture tests the legal transition, not integration.
+        op.body.state.tick = 320;
+        op.commit(true).unwrap();
+        assert!(op.commit(true).is_err());
+        assert!(op.advance().is_err());
+        op.reset().unwrap();
+        assert!(op.zero());
+    }
+    #[test]
     fn operator_ports_reset_restore_and_frozen_physics() {
         let mut op = Operator::new(12345, 0.025, 2).unwrap();
         assert!(op.commit(false).is_err());

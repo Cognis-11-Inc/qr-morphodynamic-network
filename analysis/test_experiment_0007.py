@@ -24,3 +24,30 @@ class OperationalTests(unittest.TestCase):
         vectors[59] = vectors[7]
         with self.assertRaises(ValueError):
             fit(vectors)
+
+    def test_checkpoint_physical_port_and_corruption(self):
+        import struct
+        import tempfile
+        from pathlib import Path
+
+        from analysis.experiment_0005 import fnv
+        from analysis.experiment_0007 import decode
+
+        # Entirely synthetic zero field, unregistered seed; not an engine observation.
+        body = bytearray(b"QR6FLD01")
+        body.extend(struct.pack("<QQdQQQQ", 1, 0, 0.025, 12345, 0, 4, 9))
+        body.extend(b"test")
+        body.extend(bytes(262144 * 17))
+        body.extend(struct.pack("<Q", fnv(body)))
+        outer = bytearray(b"QR7FLD01")
+        outer.extend(struct.pack("<4Q", 1, 2183, 2, 2))
+        outer.extend(body)
+        outer.extend(struct.pack("<Q", fnv(outer)))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "test.q7f"
+            path.write_bytes(outer)
+            self.assertEqual(decode(path)["port"], 2183)
+            outer[150] ^= 1
+            path.write_bytes(outer)
+            with self.assertRaises(ValueError):
+                decode(path)

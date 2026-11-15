@@ -9,7 +9,7 @@ codec does not use its historical viewer/source presentation conversion.
 QR7 port metadata is authoritative. WRITE uses 2182; CALIBRATE/READ use 2183.
 
 The inner body begins `QR6FLD01`, then seven little-endian u64 words:
-schema=1, tick, dt IEEE-754 bits, seed, configuration=2, label byte length,
+schema=1, tick, dt IEEE-754 bits, seed, configuration=0, label byte length,
 module (9 or 27); label bytes follow, then 262144 palette bytes (neuron,
 module row-major), 262144 signed f64 displacements, 262144 signed f64
 velocities, and FNV-1a checksum. The constant body label `QR7` is not an

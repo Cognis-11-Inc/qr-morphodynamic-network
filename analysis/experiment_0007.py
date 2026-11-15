@@ -29,6 +29,7 @@ CONTROLS = (
     "NO_WRITE",
 )
 FIELDS = 4096 * 64
+CHECKED = set()
 
 
 def predict(x, means):
@@ -61,14 +62,18 @@ def decode(path):
     version, port, operation, rule = struct.unpack_from("<4Q", data, 8)
     require(version == 1 and operation in (0, 1, 2) and rule in (0, 2, 3), "QR7 operation")
     require(port == (2182 if operation == 1 else 2183), "QR7 physical port")
-    require(fnv(data[:-8]) == struct.unpack_from("<Q", data, len(data) - 8)[0], "QR7 checksum")
+    digest = hashlib.sha256(data).hexdigest()
+    if digest not in CHECKED:
+        require(fnv(data[:-8]) == struct.unpack_from("<Q", data, len(data) - 8)[0], "QR7 checksum")
     b = data[40:-8]
     require(b[:8] == b"QR6FLD01", "QR7 signed body")
     version, tick, dt, seed, config, length, module = struct.unpack_from("<QQdQQQQ", b, 8)
-    require(version == 1 and config == 2 and 0 < length <= 200, "QR7 body metadata")
+    require(version == 1 and config == 0 and 0 < length <= 200, "QR7 body metadata")
     require(dt in (0.025, 0.0125) and module in (9, 27) and tick <= 2560, "QR7 grid")
     require(len(b) == 64 + length + 17 * FIELDS + 8, "QR7 exact body length")
-    require(fnv(b[:-8]) == struct.unpack_from("<Q", b, len(b) - 8)[0], "QR7 body checksum")
+    if digest not in CHECKED:
+        require(fnv(b[:-8]) == struct.unpack_from("<Q", b, len(b) - 8)[0], "QR7 body checksum")
+        CHECKED.add(digest)
     offset = 64 + length
     p = np.frombuffer(b, "u1", FIELDS, offset).reshape(4096, 8, 8)
     u = np.frombuffer(b, "<f8", FIELDS, offset + FIELDS).reshape(4096, 8, 8)
@@ -86,7 +91,7 @@ def decode(path):
         operation=operation,
         rule=rule,
         port=port,
-        sha256=hashlib.sha256(data).hexdigest(),
+        sha256=digest,
     )
 
 
@@ -302,7 +307,9 @@ def analyse(root):
     numerical = all(r["numerical_pass"] for r in result["remote_influence"])
     result["refinement_pass"] = numerical
     for model in result["models"]:
-        model["operational_pass"] = model["decoder_pass"] and numerical
+        model["operational_pass"] = model["decoder_pass"] and all(
+            r["numerical_pass"] for r in result["remote_influence"] if r["rule"] == model["rule"]
+        )
     return result
 
 
