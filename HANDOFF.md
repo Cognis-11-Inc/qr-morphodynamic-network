@@ -695,3 +695,52 @@ or new readouts. Do not tune on held-out cases or infer capacity, sequential wri
 interference, damage resilience, intelligence, Principle 002 as established law,
 or the distributed associative retrieval demanded by Principle001. Old0004/0005
 numerical failures and deferred historical experiments remain unchanged.
+
+## Experiment 0008 active slice — 2026-11-15
+
+User directive: energy distribution/information propagation, frozen P, no memory
+or learning objective. Baselinebf92f24 clean. Registration8e74e54 before data;
+implementation and fixed method325fe77 before new-seed runs.125 baseline tracked
+hashes protected except shared README/HANDOFF/index/lib exports. Nothing historical
+scientific is edited. Read exact EXPERIMENT_0008.md and REGIONS.json, not this
+handoff alone. Four equal-E1 single signs/modules, AB+/AB-, ZERO, necessary
+independent B27+ =64coarse+32fine+1repeat=97 actual executions, zero reuses.
+
+Current foreground engine session49978 uses copied original executable under
+results/experiment_0008/registered-runner: train -> Python external-reference fit
+(awaits independent TRAIN_READY) -> evaluate -> refine -> repeat. Auditor session
+73416 follows completed trajectories, reconstructs full module energy independently,
+exports numeric-only features and final P1..P6. All32 train already independently
+verified;404 reference pairs frozen before held-out runs. Primary held-out stage
+nearing completion at last update. Do not rerun or overwrite a stage. Templates
+and measurement source must stay immutable. Source-bound audit cache binds inputs.
+
+Fresh seeds reference101/103/107/109; held127/131/137/139. All signals time32,
+dt.025 and all-held fine.0125. Repeatseed107/ABm. Original executable SHA/compiler
+in EXECUTION_PROVENANCE.json; always invoke copied runner, not rebuilt target.
+Old QR6 constructors support B/dual initial states, but QR7's narrow write/read
+operator is not repurposed. Root physics unchanged. New QR8 wrapper never adapts.
+
+Half-edge total energies and K+onsite motion are distinct. Adjacent cells have
+allocated edge energy at0 without motion; primary propagation uses motion>=1e-8.
+A shells versus min-distance-to-both F shells distinct; BOTH source IDs excluded
+from decoding. Six geometry-only probes everywhere, not data-picked. Readout
+pairsLOC/SIGN9/SIGN27/DUAL; G global, SH region sums, T/U matched budgets, KP/UV
+matched double budgets; cross excludes9/27.404 fixed reference means; no calibration
+subtraction or per-frame normalization. Information gates>=7/8 both grids,
+no ties/same predictions,1.5% full-field,5% feature refinement, S>=5D plus absolute
+floors1e-8 energy/1e-6 signed. Failed energy sign discrimination is expected.
+
+New2 Rust/4 Python fixtures passed, strict root Clippy and Ruff pass; full quality
+checks/delivery remain. New report and package scripts are ready but not yet run
+on completed data. They export all404 model rows and9696 predictions,7 measured
+figures, P1/P2/P3-by-distance/P4/P5-by-distance/P6 separately. No new Bevy mode.
+
+Next bounded steps: finish97 cases and independent verification, inspect all
+verdicts/failures and real PNGs, generate report/complete tables, fresh standalone
+numeric review/source build and all archive CRC/member/copy SHA checks. Package
+all tracked sources (including compile-time docs, geometry JSON, fixtures) so
+source extraction works without Git/viewer. Complete local quality checks, final
+HANDOFF/README/index, commit/push/remote SHA/exact HEAD CI, copy Downloads. Do not
+retune failed gates or infer memory, capacity, nonlinear emergence or physical
+energy transfer solely from a propagated signal. No registered outcomes retuned.

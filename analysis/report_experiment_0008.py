@@ -1,0 +1,340 @@
+"""Export measured QR8 verdicts, complete tables and fixed-scale scientific plots."""
+
+# ruff: noqa: E501 -- Generated scientific Markdown paragraphs and table rows.
+import argparse
+import csv
+import json
+from pathlib import Path
+
+import numpy as np
+
+from analysis import experiment_0008 as q
+from analysis.experiment_0005 import rows
+
+
+def table(path, records):
+    if not records:
+        path.write_text("no records\n")
+        return
+    with path.open("w") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(records[0]))
+        writer.writeheader()
+        writer.writerows(records)
+
+
+def export(root, result):
+    folder = root / "tables"
+    folder.mkdir(exist_ok=True)
+    for name in (
+        "predictions",
+        "propagation",
+        "spreading",
+        "arrivals",
+        "symmetry",
+        "superposition",
+    ):
+        table(folder / (name + ".csv"), result[name])
+    table(folder / "refinement.csv", list(result["refinement"].values()))
+    records = []
+    margins = []
+    for model in result["decoders"]:
+        counts = model["counts"]
+        records.append(
+            dict(
+                pair=model["pair"],
+                key=model["key"],
+                dimension=model["dimension"],
+                train_correct=counts["train"]["correct"],
+                held_correct=counts["evaluate"]["correct"],
+                fine_correct=counts["refine"]["correct"],
+                held_ties=counts["evaluate"]["ties"],
+                fine_ties=counts["refine"]["ties"],
+                field_valid=model["field_valid"],
+                consistent=model["predictions_consistent"],
+                verdict=model["verdict"],
+            )
+        )
+        margins.extend(dict(pair=model["pair"], key=model["key"], **m) for m in model["margins"])
+    table(folder / "decoders.csv", records)
+    table(folder / "margins.csv", margins)
+    ledgers = []
+    for stage in ("train", "evaluate", "refine", "repeat"):
+        ledgers.extend(dict(stage=stage, **r) for r in rows(root / stage / "ledger.csv"))
+    table(folder / "execution_ledger.csv", ledgers)
+
+
+def model(result, pair, key):
+    return next(m for m in result["decoders"] if m["pair"] == pair and m["key"] == key)
+
+
+def plots(root, result, out):
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import LogNorm
+
+    out.mkdir(parents=True, exist_ok=True)
+    plt.rcParams.update({"font.size": 9, "figure.dpi": 150})
+    seed = 127
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), constrained_layout=True)
+    for signal in ("S9p", "S9m", "S27p", "S27m"):
+        data = rows(root / "evaluate" / f"s{seed}_{signal}" / "metrics.csv")
+        axes[0].plot(
+            [float(r["time"]) for r in data],
+            [sum(float(r[k]) for k in ("kinetic", "onsite", "coupling")) for r in data],
+            "--" if signal.endswith("m") else "-",
+            label=signal,
+        )
+    for signal in ("ABp", "ABm"):
+        data = rows(root / "evaluate" / f"s{seed}_{signal}" / "metrics.csv")
+        axes[1].plot(
+            [float(r["time"]) for r in data],
+            [sum(float(r[k]) for k in ("kinetic", "onsite", "coupling")) for r in data],
+            label=signal,
+        )
+    for ax in axes:
+        ax.set(xlabel="physical time", ylabel="total mechanical energy", ylim=(0, 1.05))
+        ax.legend()
+    axes[0].set_title("seed127: sign inversion preserves quadratic energy")
+    axes[1].set_title("equal E0=1; global dual-source energy")
+    fig.savefig(out / "experiment_0008_global_energy.png")
+    plt.close(fig)
+    from analysis.audit_experiment_0008 import module_streams
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), constrained_layout=True)
+    folder = root / "evaluate/s127_S9p"
+    stream = module_streams(folder)[0]
+    t = np.array(stream["tick"]) * 0.025
+    for i, d in enumerate(q.DISTANCES):
+        axes[0].plot(t, stream["values"][:, i, 3], label=f"distance{d}")
+        axes[1].plot(t, stream["values"][:, i, 2], label=f"distance{d}")
+    axes[0].set(
+        yscale="log",
+        ylim=(1e-12, 1),
+        xlabel="physical time",
+        ylabel="receiver kinetic + onsite energy",
+        title="A-shell actual motion; excludes half-edge allocation",
+    )
+    axes[0].axhline(1e-8, color="black", ls="--", label="registered arrival threshold")
+    axes[1].set(
+        xlabel="physical time",
+        ylabel="receiver mechanical energy / retained E",
+        title="Retained-energy fractions; absolute energy shown at left",
+        ylim=(0, 1),
+    )
+    for ax in axes:
+        ax.legend(fontsize=7)
+    fig.savefig(out / "experiment_0008_propagation.png")
+    plt.close(fig)
+    fig, axes = plt.subplots(2, 3, figsize=(10, 6), constrained_layout=True)
+    for ri, signal in enumerate(("S9p", "S27p")):
+        for col, t in enumerate((0, 8, 32)):
+            frame = q.checkpoint(root, "evaluate", seed, signal, t)
+            energy = (frame["k"] + frame["q"]).sum(axis=(1, 2)).reshape(16, 16, 16).sum(axis=0)
+            image = axes[ri, col].imshow(
+                np.ma.masked_less(energy, 1e-10),
+                origin="lower",
+                norm=LogNorm(1e-10, 1),
+                cmap="magma",
+            )
+            axes[ri, col].set(title=f"{signal}, t={t}; sum over z", xlabel="x", ylabel="y")
+    fig.colorbar(image, ax=axes, label="actual mechanical energy; fixed 1e-10 to E0=1", shrink=0.8)
+    fig.savefig(out / "experiment_0008_spatial_energy.png")
+    plt.close(fig)
+    fig, axes = plt.subplots(2, 3, figsize=(11, 6), constrained_layout=True)
+    for ri, signal in enumerate(("ABp", "ABm")):
+        frame = q.checkpoint(root, "evaluate", seed, signal, 16)
+        for col, field in enumerate(("u", "v")):
+            data = frame[field].reshape(16, 16, 16, 64)[8, :, :, 27]
+            im = axes[ri, col].imshow(data, origin="lower", cmap="coolwarm", vmin=-1.8, vmax=1.8)
+            axes[ri, col].set(title=f"{signal} {field}27, z8, t16", xlabel="x", ylabel="y")
+        energy = (frame["k"] + frame["q"]).sum(axis=(1, 2)).reshape(16, 16, 16).sum(axis=0)
+        en = axes[ri, 2].imshow(
+            np.ma.masked_less(energy, 1e-10), origin="lower", norm=LogNorm(1e-10, 1), cmap="magma"
+        )
+        axes[ri, 2].set(title=f"{signal} energy, sum over z", xlabel="x", ylabel="y")
+    fig.colorbar(im, ax=axes[:, :2], label="signed model field; fixed scale", shrink=0.7)
+    fig.colorbar(en, ax=axes[:, 2], label="mechanical energy; fixed scale", shrink=0.7)
+    fig.savefig(out / "experiment_0008_interference.png")
+    plt.close(fig)
+    for mask in ("all", "cross"):
+        fig, axes = plt.subplots(2, 2, figsize=(11, 7), constrained_layout=True)
+        for ax, pair in zip(axes.ravel(), q.PAIRS, strict=True):
+            family = "F" if pair == "DUAL" else "A"
+            reps = ("SH", "T", "U", "KP", "UV")
+            values = np.array(
+                [
+                    [
+                        model(result, pair, f"{family}{d}_{mask}_{rep}")["counts"]["evaluate"][
+                            "correct"
+                        ]
+                        for d in q.DISTANCES
+                    ]
+                    for rep in reps
+                ]
+            )
+            im = ax.imshow(values, vmin=0, vmax=8, cmap="viridis", aspect="auto")
+            for i, rep in enumerate(reps):
+                for j, d in enumerate(q.DISTANCES):
+                    item = model(result, pair, f"{family}{d}_{mask}_{rep}")
+                    ax.text(
+                        j,
+                        i,
+                        f"{values[i, j]}/8\n{item['verdict'][0]}",
+                        ha="center",
+                        va="center",
+                        fontsize=8,
+                        color="white" if values[i, j] < 5 else "black",
+                    )
+            ax.set(
+                title=f"{pair}: {family} regions, {mask}",
+                xticks=range(5),
+                xticklabels=q.DISTANCES,
+                yticks=range(5),
+                yticklabels=reps,
+                xlabel="distance (no near/far pooling)",
+            )
+        fig.colorbar(
+            im, ax=axes, label="held-out correct / 8; P/F/I denotes gated verdict", shrink=0.8
+        )
+        fig.savefig(out / f"experiment_0008_readout_{mask}.png")
+        plt.close(fig)
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4), constrained_layout=True)
+    cases = list(result["refinement"].values())
+    values = [100 * r["maximum_error"] for r in cases]
+    axes[0].bar(
+        range(len(values)), values, color=["#b33939" if v > 1.5 else "#287b9c" for v in values]
+    )
+    axes[0].axhline(1.5, ls="--", color="black", label="registered1.5%")
+    axes[0].set(
+        xlabel="four held-out seeds x eight inputs",
+        ylabel="maximum unaligned full-field error (%)",
+        title="Whole-field timestep confirmation",
+    )
+    axes[0].legend()
+    axes[1].semilogy(
+        [max(r["maximum_error"], 1e-20) for r in result["superposition"]],
+        ".",
+        label="actual signed-superposition relative error",
+    )
+    axes[1].axhline(1e-12, ls="--", color="black", label="registered1e-12")
+    axes[1].set(
+        xlabel="seed/grid/dual polarity",
+        ylabel="relative full-field error",
+        title="Linear dynamics control",
+    )
+    axes[1].legend(fontsize=7)
+    fig.savefig(out / "experiment_0008_numerical.png")
+    plt.close(fig)
+
+
+def report(root, result):
+    verdicts = result["verdicts"]
+    text = [
+        "# Experiment 0008: energy distribution and lattice communication\n",
+        "Registration `8e74e54` and implementation/method `325fe77` preceded all new-seed outcomes. Frozen morphology, unchanged QR6 physics, serial CPU f64. Reference seeds101,103,107,109; held-out127,131,137,139. No new-seed threshold fitting, changed signals, feature selection, seed replacement or held-out refitting.\n",
+        "## Separate scientific verdicts\n",
+        "| Question | Registered result | Scope |",
+        "|---|---|---|",
+    ]
+    for key in ("P1", "P2", "P3", "P4", "P5", "P6"):
+        value = verdicts[key]
+        label = json.dumps(value) if isinstance(value, dict) else value
+        scope = {
+            "P1": "A-only motion reaches ordered distance shells; arrival/peak refinement",
+            "P2": "energy participation, non-source motion and cross-module motion at one checkpoint",
+            "P3": "S9p versus S27p spatial-energy T; primary distal A4, near A2, secondary A6",
+            "P4": "energy sign loss versus signed UV at A2/A4; symmetry independently checked",
+            "P5": "ABp versus ABm spatial-energy T; primary distal F4, near F2, secondary F6",
+            "P6": "energy, frozen/zero, sign/superposition, repeat and full-field numerical gates",
+        }[key]
+        text.append(f"| {key} | {label} | {scope} |")
+    text += [
+        "\nThese results are not merged into an overall success score. Propagation, redistribution and discrimination are different questions. No associative memory, internal learning, semantics, emergence, resilience or communication capacity is established.\n",
+        "## Execution and definitions\n",
+        "97 actual trajectories:64 primary (.025),32 all-held-out confirmations (.0125),1 preselected seed107/ABm repeat. No reused, sign-synthesized or interpolated trajectories. B27p was added before execution as the independent B-source basis; it is not a classifier label. Each nonzero input has actual E0=1; ZERO has E0=0, v0=0. No continuing drive, palette edits or history accumulation. Complete execution status is exported.\n",
+        "SourceA2182, sourceB2186; four single inputs S9p/S27p/S9m/S27m and dual ABp/ABm. Same actual initial P within each seed and across grids. Model omega/gamma, cardinal module links, Cubic6 links, split update order, damping and boundary semantics are unchanged. Heterogeneous initialization includes the established special module27 policy; these results are conditional on that initializer.\n",
+        "K=.5v^2. Q=onsite plus HALF of every incident edge potential. Actual module mechanical energy is K+Q, not a squared-activity substitute. Motion energy K+onsite excludes edge allocations. At time0 neighboring cells/modules can own half-edge energy with zero local u/v. Arrival therefore uses actual receiver motion energy>=1e-8, while both mechanical and motion crossings are reported. No exact integrated edge-transfer amount is inferred from regional energy change or instantaneous power.\n",
+        "Every tick retains global diagnostics,10 region aggregates and50 fixed signed/energy probes. Full P,u,v,K,Q at0,.8,3.2,8,16,32:582 complete checkpoints. Only the5 nonzero times enter the external readout. Earliest crossings and window peaks use actual sampled ticks, no interpolation; a peak at32 need not be a later global maximum.\n",
+        "A_d is distance from2182; F_d is minimum distance from either potential source. Receivers exclude both source IDs. Full A4 energy separately includes B's initial allocation and is never called arrival fromA. F4 receivers are at least4 hops from BOTH sources. Geometry-only farthest-point sampling fixes6 decoding probes per region, identical for all seeds/inputs/grids. Full shell statistics and actual all-module spatial partitions are retained independently of those six readout probes.\n",
+        "## Energy, transport and spreading\n",
+        "![Global energy](figures/experiment_0008_global_energy.png)\n",
+        "![Motion arrival and retained-energy fractions](figures/experiment_0008_propagation.png)\n",
+        "![Actual spatial energy](figures/experiment_0008_spatial_energy.png)\n",
+        "Images use fixed mechanical-energy limits1e-10 to1 (E0), not frame normalization. Log display masks values below its stated display floor only; raw values and scientific thresholds are untouched. The fraction plot explicitly uses currently retained energy; its absolute counterpart prevents relative concentration being mistaken for production.\n",
+    ]
+    text.append(
+        f"P1 individual input/shell decisions: {sum(r['verdict'] == 'PASS' for r in result['propagation'])}/{len(result['propagation'])} PASS. P2 held-out input decisions: {sum(r['verdict'] == 'PASS' for r in result['spreading'])}/{len(result['spreading'])} PASS. All failures and each arrival, peak and physical time are in propagation/spreading/arrivals.csv; the report does not replace failed far results with near ones.\n"
+    )
+    text += [
+        "## Distinguishability and representation limits\n",
+        "Raw external class means use reference seeds only; no virgin subtraction, whitening, feature scaling, per-frame normalization or adaptive selection. Numeric-only vectors exclude labels, IDs, P, seed and condition metadata. A nearest-mean measurement is not a trained internal neural network. Expected classes are evaluated after prediction. Same held-out templates on both grids.\n",
+        "G is5 total-energy scalars, inherently global/source-inclusive. SH is5 whole-receiver-region energy sums, with larger spatial coverage disclosed. T and U share the same1920 scalar budget (1860 cross): energy per module versus signed displacement at6 probes. KP and UV share3840 observations (3720 cross): kinetic/potential versus signed displacement/velocity. Comparing T to UV doubles scalar observations and is not called budget-matched. Cross excludes BOTH directly stimulated channels9/27, regardless of input. No near/far features are combined.\n",
+        "To pass:>=7/8 correct on each grid, no ties, identical predictions, full-field validity, each feature refinement<=5%, per-seed fine separation above the fixed1e-8 energy /1e-6 signed floor and at least5x coarse/fine disagreement. Invalid physical/feature refinement is INDETERMINATE; below-floor distinguishability FAILS; unresolved separation is INDETERMINATE. Ties count incorrect. See registration for complete priority. Finite paired deterministic cases do not provide a population accuracy or bitrate estimate.\n",
+        "| Pair | Global G train | Global G held-out | Fine | Ties held/fine | Verdict (not distal) |",
+        "|---|---:|---:|---:|---:|---|",
+    ]
+    for pair in q.PAIRS:
+        item = model(result, pair, "G")
+        c = item["counts"]
+        text.append(
+            f"| {pair} | {c['train']['correct']}/8 | {c['evaluate']['correct']}/8 | {c['refine']['correct']}/8 | {c['evaluate']['ties']}/{c['refine']['ties']} | {item['verdict']} |"
+        )
+    text += [
+        "\n![All-module readouts](figures/experiment_0008_readout_all.png)\n",
+        "![Cross-module readouts](figures/experiment_0008_readout_cross.png)\n",
+        "Color encodes descriptive accuracy; P/F/I encodes the FULL gated verdict, so correct-but-invalid numerical readouts are not promoted to success. Complete404 model rows,9696 reference/held-out/fine predictions, every error/ambiguity, all distances and per-seed margins are exported in numeric tables. Main selected rows follow; alternative successful rows do not replace a failed primary.\n",
+        "| Pair | Region | Mask | Rep/budget | Train | Held-out | Fine | Ties held/fine | Verdict |",
+        "|---|---|---|---|---:|---:|---:|---:|---|",
+    ]
+    for pair in q.PAIRS:
+        family = "F" if pair == "DUAL" else "A"
+        for d in (2, 4, 6):
+            for mask in ("all", "cross"):
+                for rep in ("SH", "T", "U", "KP", "UV"):
+                    item = model(result, pair, f"{family}{d}_{mask}_{rep}")
+                    c = item["counts"]
+                    text.append(
+                        f"| {pair} | {family}{d} | {mask} | {rep}/{item['dimension']} | {c['train']['correct']}/8 | {c['evaluate']['correct']}/8 | {c['refine']['correct']}/8 | {c['evaluate']['ties']}/{c['refine']['ties']} | {item['verdict']} |"
+                    )
+    text += [
+        "\n## Interaction and numerical reliability\n",
+        "![Measured signed interference and actual energy](figures/experiment_0008_interference.png)\n",
+        "![Full-field refinement and superposition](figures/experiment_0008_numerical.png)\n",
+        "Signed superposition uses independently executed A27p and B27p at the same actual P/dt, scaled by measured amplitude ratios alpha,beta for each dual input. It never adds energy trajectories or assumes1/sqrt2. Quadratic energy cross terms create redistribution even though the underlying dynamics are linear. Sign cancellation is not energy destruction; positive local/edge potentials and damping remain in the balance. No observed interference is called emergence.\n",
+    ]
+    text.append(
+        f"Maximum all-tick numerical drift {100 * max(r['maximum_drift'] for r in result['trajectories'].values()):.8f}% versus1%; full-field refinement max {100 * max(r['maximum_error'] for r in result['refinement'].values()):.8f}% versus1.5%. Sign inversion checked in {len(result['symmetry'])} seed/grid/module comparisons; exact energy stream byte identity in {sum(r['exact_energy_stream_bytes'] for r in result['symmetry'])}. Matched-amplitude superposition max relative error {max(r['maximum_error'] for r in result['superposition']):.8e}. Repeat seed107/ABm reproduces {len(result['repeat_files'])} case files byte-for-byte on this host/compiler. No cross-platform bit identity is promised.\n"
+    )
+    failed = [r for r in result["refinement"].values() if not r["pass_gate"]]
+    text.append(
+        "Full-field numerical failures: "
+        + (json.dumps(failed) if failed else "none")
+        + ". Energy matching, zero input and frozen palettes were checked independently. A bounded energy trace or an attractive image never rescues failed field refinement.\n"
+    )
+    text += [
+        "## Evidence boundaries and reproduction\n",
+        "Python independently reconstructs every module energy partition from actual P/u/v, validates all checkpoint region/probe/global measurements, verifies stream timelines/fractions and source identities, computes arrival/spreading from actual every-tick records, checks full signed controls/refinement, fits only reference observations and regenerates every classifier verdict. Every-tick aggregate values are engine observations validated against full fields at registered checkpoints; this is not a second complete ODE integration or a full-state record at every tick. Source-bound caches bind every input byte.\n",
+        "The authored mechanical units and absolute detection floors are experimental conventions; there is no real sensor-noise or physical-material validation. Failure of a fixed class-mean readout alone does not prove every possible readout fails. By contrast, the explicitly tested even-energy/odd-signed inversion symmetry establishes the prescribed sign ambiguity within this frozen model. Energy arrival, multi-neuron spread and useful remote discrimination remain separate.\n",
+        "Earlier QR4/QR5 timestep failures and QR7 adaptive R3 failure are unchanged. Frozen QR8 findings do not validate plasticity, recall, associations, capacity, interference tolerance, resilience or Principle002 as an experimentally established law. Principle 002 is a proposed mechanism, not an experimentally established law.\n",
+        "See [registration](../EXPERIMENT_0008.md), [schema](EXPERIMENT_0008_SCHEMA.md) and [README reproduction commands](../README.md). Raw observations, full ledger, source/data manifests, references and viewer-free review/data/full-field archives remain ignored under results/experiment_0008 and are copied to Downloads at delivery. Source checks, local measurements, remote commit and hosted CI are reported separately. No Bevy window, GPU physics, viewer modification or FPS claim was needed.\n",
+    ]
+    Path("docs/EXPERIMENT_0008_RESULTS.md").write_text("\n".join(text))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("root", type=Path)
+    args = parser.parse_args()
+    result = json.loads((args.root / "verification.json").read_text())
+    for item in result["trajectories"].values():
+        q.CHECKED.update(item["frames"])
+    export(args.root, result)
+    plots(args.root, result, Path("docs/figures"))
+    report(args.root, result)
+    print("Generated QR8 report, complete tables and seven measured-data figures")
+
+
+if __name__ == "__main__":
+    main()

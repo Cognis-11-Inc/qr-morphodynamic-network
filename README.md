@@ -305,3 +305,41 @@ operationally indeterminate after a3.799% full-field refinement failure against
 repeat pass. This is calibration-dependent discrimination, not associative recall.
 The [Operational Lattice Manual](docs/OPERATIONAL_LATTICE_MANUAL.md) records exact
 operations, measured energy costs, reproducibility and failed capabilities.
+
+## Experiment 0008: frozen energy distribution and communication
+
+[Registration](EXPERIMENT_0008.md) freezes97 actual executions, four equal-energy
+single inputs, two dual polarities, ZERO and the independent B superposition
+basis. All palettes stay frozen. [QR8 schema](docs/EXPERIMENT_0008_SCHEMA.md)
+records full signed fields and per-module mechanical partitions. Distal readouts
+use fixed six-sensor regions with matched energy/signed budgets; no near/far
+pooling, palette encoding or internal training. Energy arrival and discrimination
+have separate verdicts. Use a fresh root and the same compiled executable:
+
+```sh
+cargo build --locked --release --bin experiment_0008
+mkdir -p results/my-0008
+cp target/release/experiment_0008 results/my-0008/registered-runner
+results/my-0008/registered-runner train results/my-0008
+# In a second terminal; performs independent analysis, never physics updates:
+.venv/bin/python -m analysis.audit_experiment_0008 results/my-0008 --follow
+# In the first terminal, after train returns; fit awaits independent TRAIN_READY:
+.venv/bin/python -m analysis.experiment_0008 results/my-0008 fit
+results/my-0008/registered-runner evaluate results/my-0008
+results/my-0008/registered-runner refine results/my-0008
+results/my-0008/registered-runner repeat results/my-0008
+# Wait for the auditor's verification.json, then:
+.venv/bin/python -m analysis.experiment_0008 results/my-0008 review
+.venv/bin/python -m analysis.report_experiment_0008 results/my-0008
+.venv/bin/python -m analysis.package_experiment_0008 results/my-0008 --downloads /home/cognis/Downloads
+```
+
+Record executable SHA, compiler, source commit and template-freeze timing before
+interpretation; this delivery's provenance is in its ignored execution receipt.
+Estimated physics time20–35 minutes, plus verification/archives; no GPU or viewer
+is needed. The 404 external class-mean readouts are fixed before held-out data.
+G/T/SH/KP are quadratic energetic observables; U/UV retain signs. Whole-field
+refinement, absolute detectability, numerical separation and classifier gates
+are independent. Never interpret energy reaching a shell as proof that its
+input remains distinguishable there. `--fresh` forces full independent auditing.
+Portable source includes all embedded specifications, geometry JSON and fixtures.
