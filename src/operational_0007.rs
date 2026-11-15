@@ -39,7 +39,18 @@ impl Checkpoint {
     /// # Errors
     /// Rejects invalid state or port/operation combinations.
     pub fn encode(&self) -> io::Result<Vec<u8>> {
-        if !matches!(self.port, 2182 | 2183)
+        let time =
+            f64::from(u32::try_from(self.frame.tick).map_err(io::Error::other)?) * self.frame.dt;
+        if ![0.025, 0.0125].contains(&self.frame.dt)
+            || self.frame.configuration != Configuration::Heterogeneous
+            || (self.operation == Operation::Calibrate) != (self.rule == 0)
+            || time
+                > if self.operation == Operation::Write {
+                    8. + 1e-10
+                } else {
+                    32. + 1e-10
+                }
+            || !matches!(self.port, 2182 | 2183)
             || self.port
                 != if self.operation == Operation::Write {
                     2182
@@ -435,6 +446,15 @@ mod tests {
         op.read(9, true).unwrap();
         assert_eq!(op.body.state.u[2182 * 64 + 9], 0.);
         assert!(op.body.state.u[2183 * 64 + 9] > 0.);
+        let mut invalid = op.checkpoint().unwrap();
+        invalid.frame.dt = 0.05;
+        assert!(invalid.encode().is_err());
+        invalid = op.checkpoint().unwrap();
+        invalid.rule = 2; // CALIBRATE must identify adaptation as off.
+        assert!(invalid.encode().is_err());
+        invalid = op.checkpoint().unwrap();
+        invalid.frame.tick = 2561;
+        assert!(invalid.encode().is_err());
         let encoded = op.checkpoint().unwrap().encode().unwrap();
         assert_eq!(
             Checkpoint::decode(&encoded).unwrap(),

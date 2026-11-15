@@ -229,6 +229,13 @@ def verdict(model, result):
     numerical = all(
         r["numerical_pass"] for r in result["readout"]["remote_influence"] if r["rule"] == rule
     )
+    numerical &= all(
+        max(r["relative_errors"]) <= 0.05
+        for r in result["readout"]["margins"]
+        if r["rule"] == rule and r["calibrated"] == model["calibrated"]
+    )
+    if model["calibrated"]:
+        numerical &= all(r["pass_gate"] for r in result["calibration_refinement"])
     if not numerical:
         return "INDETERMINATE (numerical gate)"
     return "PASS" if model["operational_pass"] else "FAIL"
@@ -343,7 +350,7 @@ def manual(result):
     for model in models:
         counts = model["counts"]
         lines.append(
-            f"- R{model['rule']} {'calibrated' if model['calibrated'] else 'raw'} REMOTE discrimination: **{verdict(model, result)}**; held-out {counts['evaluate/REMOTE_ONLY']['correct']}/8, fine {counts['refine/REMOTE_ONLY']['correct']}/8. {'A bounded operational capability only within this registered apparatus.' if model['operational_pass'] else 'Do not describe this failed or indeterminate readout as a working capability.'}"
+            f"- R{model['rule']} {'calibrated' if model['calibrated'] else 'raw'} REMOTE discrimination: **{verdict(model, result)}**; held-out {counts['evaluate/REMOTE_ONLY']['correct']}/8, fine {counts['refine/REMOTE_ONLY']['correct']}/8. {'A bounded operational capability only within this registered apparatus.' if verdict(model, result) == 'PASS' else 'Do not describe this failed or indeterminate readout as a working capability.'}"
         )
     lines += [
         "\nCalibration-dependent success, when present without raw success, requires the externally stored virgin reference. Template means are fitted externally on four training seeds and frozen; no learning occurs inside the decoder during evaluation. A positive secondary R3 result cannot replace the primary R2 verdict.\n",
@@ -363,6 +370,7 @@ def main():
     result = json.loads((args.root / "verification.json").read_text())
     protocol = json.loads((args.root / "protocol-verification.json").read_text())
     assert protocol["actual_operations"] == 499 and protocol["reuse_identity"]
+    result["calibration_refinement"] = protocol["calibration_refinement"]
     for trajectory in result["trajectories"].values():
         q7.CHECKED.update(trajectory["frames"])
     make_tables(args.root, result)

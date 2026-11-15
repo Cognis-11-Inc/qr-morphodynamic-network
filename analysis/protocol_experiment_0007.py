@@ -103,7 +103,30 @@ def main():
         writer = csv.DictWriter(stream, fieldnames=list(operations[0]))
         writer.writeheader()
         writer.writerows(operations)
+    calibration = []
+    for seed in q7.HELD:
+        for pulse in (9, 27):
+            name = f"s{seed}_CALIBRATE_p{pulse}"
+            errors = []
+            for physical_time in q7.TIMES:
+                coarse = q7.checkpoint(root / "evaluate", name, physical_time)
+                fine = q7.checkpoint(root / "refine", name, physical_time)
+                errors.append(
+                    q7.relative(
+                        np.concatenate((coarse["u"].ravel(), coarse["v"].ravel())),
+                        np.concatenate((fine["u"].ravel(), fine["v"].ravel())),
+                    )
+                )
+            calibration.append(
+                dict(
+                    seed=seed,
+                    pulse=pulse,
+                    maximum_field_error=max(errors),
+                    pass_gate=max(errors) <= 0.015,
+                )
+            )
     receipt = dict(
+        calibration_refinement=calibration,
         actual_operations=actual_count,
         reused_trajectories=reuse_count,
         virgin_restore_identity=True,
