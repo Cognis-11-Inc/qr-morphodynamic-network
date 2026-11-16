@@ -794,3 +794,75 @@ Current failures remain frozen. Do not infer learned association, capacity,
 resilience, nonlinear emergence or Principle002 as experimentally established law.
 Earlier QR4/QR5 timestep failures and QR7 R3 failure remain unchanged. Principle 002
 is a proposed mechanism, not an experimentally established law.
+
+## Experiment 0009 standalone gate stopped — 2026-11-15
+
+Read EXPERIMENT_0009.md and docs/EXPERIMENT_0009_RESULTS.md before proceeding.
+Baseline5fd2794 clean; preregistration17ee680; standalone physics/independent
+methodc07dac9 committed before execution. All144 protected baseline files match
+ docs/EXPERIMENT_0009_PROTECTED_SHA256.txt; prior models/results are unchanged.
+The four permitted shared files are README/HANDOFF/index/src/lib.rs (new export).
+
+Actual17 standalone runs,68 full q/w checkpoints, every-tick global metrics and
+21fixed fluid probes per tick. Five fixtures (LOW/MID/HIGH standing waves,
+diagonal standing wave, isotropic Gaussian) on N48dt.05,N48dt.025,N96dt.025,
+plus primary ZERO and independent HIGH repeat. Every case completes24 normalized
+units (=15.774288856ms); total observed runner wall123.621235s. No GPU use.
+Original executable results/experiment_0009/registered-runner; SHA/compiler/all
+pre-execution source hashes in provenance.json. Raw observations under standalone/.
+Full fields only0,6,12,24; no synthetic/interpolated checkpoints.
+
+New src/acoustic_0009.rs and dedicated experiment_0009 CLI, independent
+analysis/experiment_0009.py. Homogeneous reference seawater-like container24m
+per axis (24³m³ domain), T20C,S35g/kg,atmospheric reference. Computed
+rho1024.934178644976kg/m³,c1521.4632m/s,K2372569159.096716Pa,
+mu.00107660968648Pa s. Conservative model: material absorption/viscosity/thermal
+losses DISABLED, not a full dissipative seawater model. MIT/NPL/ITTC references
+and temperature/salinity scale caveats in registration. No pure-NaCl equivalence.
+Mapping1m,1kg/module,1um oscillator displacement,t*=1/c,E*=2.31485e-6J is
+engineered, not measured QR material. Frequencies126.7886/190.1829/253.5772Hz
+are conditional on that mapping. Rigid reflecting walls, fourth-order staggered
+spatial gradient and exact-negative-transpose divergence, symmetric time split.
+Fluid has no neural graph dependency. Neural coordinate/orientation and reciprocal
+transducer design are preregistered ONLY, not implemented after failed S1.
+
+Scientific results: S1 FAIL, S8 FAIL; S2/S3/S4/S5/S6/S7 INDETERMINATE/NOT_RUN.
+580 reconstructed scalar gates,31 failures:30 energy-reconstruction comparisons
+exceed1e-12 (worst2.2836185617324132e-11), LOW spatial/time maximum continuum
+error ratio.8697091620851024 exceeds.35. Absolute field, phase/amplitude/speed,
+actual1%/.25% drift, symmetry, ZERO and all7repeat raw files pass. Full field max
+across all modal grids.7995098564%; fine spatial max.04223154183%; max actual
+energy drift.1347190626%. Do not hide failed reconstruction/reduction gates
+behind these absolute successes. Completed scientific prerequisite is negative.
+
+Post-outcome diagnosis in analysis/diagnose_experiment_0009.py and
+standalone/diagnosis.json: worst recorded3455.9999999309107 repeats EXACTLY with
+ordinary serial sum; math.fsum3456.000000009832 and NumPy3456.0000000098325 agree
+relative1.316e-16. Summation precision causes that diagnostic discrepancy, not
+physical energy creation. Split dispersion formula predicts all12modal/grid
+maximum continuum errors within1e-10 absolute. LOW coarse space/time cancellation
+makes error unusually small; refining time alone increases continuum discrepancy
+while semidiscrete temporal error reduces~4x. Do not replace original acceptance
+criteria with this post-outcome explanation. New registration needed for repairs.
+Core physics/analyzer source stayed byte-identical toc07dac9 throughout execution.
+
+Conditional full population445 cases (192unit-work calibrations,192positive,
+48negative,12zero,1repeat) are explicitly NOT_RUN in conditional_matrix_ledger.csv.
+No coupled population, source/receiver transducer implementation, S9/S27 decoder,
+frequency attenuation comparison or DIRECT/FLUID/HYBRID ranking exists. S1
+stopping rule required stopping before those stages. No new seeds were executed.
+No learned association/mobility/whale-like range/absorption advantage is claimed.
+Previous QR8 four-hop success/six-hop/participation/dual failures stay unchanged.
+Principle 002 is a proposed mechanism, not an experimentally established law.
+
+Report, schema,5actual-data PNGs and all source in Git. PNGs actually rendered
+and inspected; fixed physical scales, full signed arrays authoritative. Gaussian
+peak pressure versus distance is a standalone diagnostic, NOT material absorption
+or neural transport. No viewer/window/FPS witness; existing defaults untouched.
+Local38Rust/32Python/3viewer tests plus strict fmt/lint/doc/release/doctest/compile
+checks required. Final receipts after results commit are ignored
+results/experiment_0009/delivery.json and delivery-status.json. Missing receipts
+mean delivery checks pending. Quick_Review and Full_Fields ZIPs in Downloads
+must pass CRC/member/copy SHA plus fresh extracted Rust build/test, all144
+historical preservation hashes and full independent68-field/580-gate rerun,
+including identical31failures. Exact final HEAD/remote/hosted CI are separate.

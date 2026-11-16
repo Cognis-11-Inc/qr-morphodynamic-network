@@ -51,6 +51,21 @@ class AcousticTests(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 q.decode(Path(folder) / "missing.q9a")
 
+    def test_wall_mirror_gradient_matches_analytic_eigenmode(self):
+        n, h = 12, 2.0
+        gradient = np.zeros((n - 1, n))
+        for i in range(n - 1):
+            gradient[i, i + 1] += 9 / 8 / h
+            gradient[i, i] -= 9 / 8 / h
+            gradient[i, min(i + 2, n - 1)] -= 1 / 24 / h
+            gradient[i, max(i - 1, 0)] += 1 / 24 / h
+        wavenumber = 2 * np.pi / 24
+        pressure = np.cos(wavenumber * (np.arange(n) + 0.5) * h)
+        kh = 2 / h * (9 / 8 * np.sin(wavenumber * h / 2) - np.sin(3 * wavenumber * h / 2) / 24)
+        expected = -kh * np.sin(wavenumber * (np.arange(n - 1) + 1) * h)
+        np.testing.assert_allclose(gradient @ pressure, expected, atol=1e-15)
+        np.testing.assert_allclose(gradient.T @ gradient @ pressure, kh**2 * pressure, atol=1e-15)
+
 
 if __name__ == "__main__":
     unittest.main()

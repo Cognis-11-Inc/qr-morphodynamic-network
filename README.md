@@ -64,6 +64,35 @@ The runner refuses an existing output directory. The analyzer independently chec
 
 Read [AGENTS.md](AGENTS.md) and [HANDOFF.md](HANDOFF.md) when resuming work.
 
+## Experiment 0009: saline acoustic container, standalone prerequisite stopped
+
+[Registration](EXPERIMENT_0009.md) froze a conservative 24 m acoustic container,
+engineered QR-to-physical unit mapping and conditional reciprocal coupling study.
+The [measured report](docs/EXPERIMENT_0009_RESULTS.md) records **S1/S8 FAIL**:
+30 energy-report reconstruction discrepancies exceed1e-12, and the LOW-band
+spatial/time error-reduction ratio0.869709 exceeds0.35. Absolute wave-error and
+energy-drift bounds pass; ordinary summation roundoff and dispersion cancellation
+are diagnosed separately without changing any gate. S2–S7 are INDETERMINATE:
+no neuron-fluid coupling, neural decoder or conditional445-case matrix was run.
+
+17 standalone executions,68 full pressure/velocity checkpoints and every-tick
+probes are retained. Material seawater absorption remains deferred. No improved
+QR communication, low-frequency superiority or real QR-cell material is claimed.
+
+```sh
+.venv/bin/python -m pip install -r requirements-analysis.txt -r requirements-plot.txt
+cargo build --locked --release --bin experiment_0009
+target/release/experiment_0009 standalone results/my-0009
+.venv/bin/python -m analysis.experiment_0009 results/my-0009
+.venv/bin/python -m analysis.diagnose_experiment_0009 results/my-0009
+.venv/bin/python -m analysis.report_experiment_0009 results/my-0009
+```
+
+Use a fresh output root. The analyzer exits normally after recording both passes
+and failures; inspect verification.json. See the [schema](docs/EXPERIMENT_0009_SCHEMA.md).
+Portable Quick Review plus Full Fields archives reproduce the complete audit
+without a viewer. The current scientific stopping rule remains in force.
+
 ## Experiment 0002: intrinsic dynamics, transport, and resonance
 
 Stages T and R are implemented in a separate runner and measured across **1,101 cases per run**, with two byte-identical complete runs. Each full network still contains 4,096 independent 8 × 8 color-and-shape configurations. Displacement and velocity are transient; plasticity is disabled.
