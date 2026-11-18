@@ -33,3 +33,39 @@ The ignored execution provenance binds source HEAD, every tracked source hash,
 compiler and original executable before measurement. Packaged delivery source
 can have a later HEAD and is identified separately. Historical protected hashes
 exclude only the four explicitly shared integration/documentation files.
+
+## Stationary coupling records
+
+The pilot reuses QR10AC01 with kind2 meaning zero initial fluid; nonzero later
+fields are valid coupled observations. Each checkpoint also has
+`TICK.neuron.csv`: exact neuron/module ordering, palette0..4, signed u/v for
+2x64 modules, schema1 identified by metadata.csv (seed, band index0..2,
+module9/27, separation, grid/dt, control and actual stationary coordinates).
+Independent repeated executions retain identical physical metadata.
+
+`history.csv` contains receiver-only full64 u/v at every.1 time. `probes.csv`
+contains actual local fluid pressure, co-timed face-averaged velocity and energy
+density at that receiver. `metrics.csv` has all-tick separate fluid, source,
+receiver and optional direct-spring energies, damping, signed and positive source
+work, transducer work/backflow and accumulated exchange cancellation.
+
+`kicks.csv` records BOTH source half-kicks every tick: before/after actual neural
+velocity and applied impulse, permitting independent forcing/work reconstruction.
+`exchange.csv` records every forward/reverse transducer substep, neuron/module,
+normalized pressure projection x before/after, neural velocity before/after and
+actual support fluid/neural energy deltas. `ports.csv` keeps signed net, positive,
+backflow and neural work per port. Fluid projection x=h^(3/2) sum(W q)/norm(W),
+so delta fluid energy=.5 delta(x²), delta neural kinetic=.5 delta(v²), within
+roundoff. Full support energy deltas are observed independently in Rust.
+
+Cumulative source-positive and receiver-positive fields count work INTO fluid;
+a negative receiver net means fluid supplied net energy to that neuron. These
+are exchange work, not external work. Exact kick work is external; initial
+states are zero. All palettes stay frozen. Neuron energy includes intrinsic and
+internal-cardinal spring terms; DIRECT also includes its explicitly artificial
+inter-neuron spring. No external historical Cubic6 edges exist in FLUID.
+
+The width1.5m tensor hats overlap at2m separation. A causal receiver response
+therefore does not alone prove delay across disjoint supports or long-range
+transport. The conditional4/6m cases have disjoint supports. This geometric
+limitation must remain attached to any2m pilot observation.

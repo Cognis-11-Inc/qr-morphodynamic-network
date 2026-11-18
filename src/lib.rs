@@ -48,3 +48,5 @@ mod tests {
 
 /// Independently registered QR10 compensated acoustic substrate.
 pub mod acoustic_0010;
+/// QR10 isolated actual QR neurons and reciprocal stationary transducers.
+pub mod coupling_0010;
