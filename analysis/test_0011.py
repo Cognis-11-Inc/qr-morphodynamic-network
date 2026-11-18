@@ -58,3 +58,71 @@ class ListeningTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ScientificBoundaryTests(unittest.TestCase):
+    def test_external_features_exclude_the_actuated_source(self):
+        from analysis.audit_0011 import signature
+
+        dtype = np.dtype([("tick", "<u8"), ("nodes", io.NODE, (2,)), ("checksum", "<u8")])
+        frames = np.zeros(481, dtype=dtype)
+        frames["tick"] = np.arange(481)
+        frames["nodes"][:, 1]["u"] = 0.12
+        frames["nodes"][:, 1]["v"] = -0.03
+        frames["nodes"][:, 1]["z"] = np.linspace(-0.5, 0.5, 405)
+        with tempfile.TemporaryDirectory() as tmp:
+            a, b = Path(tmp) / "unrelated-A", Path(tmp) / "unrelated-B"
+            a.mkdir()
+            b.mkdir()
+            header = b"QR11OBS1" + struct.pack("<3QdQ", 1, 2, 48, 0.05, 480)
+            (a / "observations.q11o").write_bytes(header + frames.tobytes())
+            frames["nodes"][:, 0]["u"] = 9876
+            frames["nodes"][:, 0]["z"] = 0.99
+            (b / "observations.q11o").write_bytes(header + frames.tobytes())
+            for name in ("SIGNED", "ENERGY", "ALL_TRACE", "INSTANT", "QR10_STYLE"):
+                np.testing.assert_array_equal(signature(a, name), signature(b, name))
+
+    def test_fit_rejects_preexisting_held_out_observations(self):
+        from analysis.communication_0011 import fit
+
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "held").mkdir()
+            with self.assertRaises(ValueError):
+                fit(Path(tmp))
+
+    def test_morphology_auditor_rejects_a_legal_but_wrong_edit(self):
+        import csv
+
+        from analysis.audit_coupling_0010 import neuron_energy
+        from analysis.morphology_0011 import verify_operation
+
+        def save(path, nodes):
+            b = b"QR11NEU1" + struct.pack("<3Qd", 1, 2, 960, 0.05) + nodes.tobytes()
+            path.write_bytes(b + struct.pack("<Q", fnv(b)))
+
+        before = np.zeros(2, dtype=io.NODE)
+        before["palette"] = np.arange(64) % 5
+        before["age"] = 960
+        before["z"][:, 277] = 0.5
+        before["z"][:, 278] = 0.4
+        before["u"][:, 0] = 0.2
+        after = before.copy()
+        after["palette"][:, [0, 1]] = before["palette"][:, [1, 0]]
+        after["committed"] = 1
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            save(root / "before.n11", before)
+            save(root / "after.n11", after)
+            with (root / "commit.csv").open("w") as f:
+                w = csv.writer(f)
+                w.writerow(("neuron", "before_energy", "after_energy", "switch_work", "positions"))
+                for i in (0, 1):
+                    e0 = neuron_energy(before[i]["palette"], before[i]["u"], before[i]["v"])
+                    e1 = neuron_energy(after[i]["palette"], after[i]["u"], after[i]["v"])
+                    w.writerow((i, e0, e1, e1 - e0, 2))
+            (root / "swaps.csv").write_text("neuron,a,b\n0,0,1\n1,0,1\n")
+            self.assertTrue(verify_operation(root, True)["valid"])
+            after["palette"][0, [2, 3]] = after["palette"][0, [3, 2]]
+            save(root / "after.n11", after)
+            with self.assertRaises(ValueError):
+                verify_operation(root, True)
