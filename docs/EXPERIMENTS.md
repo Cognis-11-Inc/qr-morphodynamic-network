@@ -54,3 +54,19 @@ is a completed research deliverable.
 - 2026-11-15: 0008 frozen8e74e54, method325fe77 before data.97 actual cases (64primary+32fine+1repeat),582 full signed/energy checkpoints. Spatial-energy module-location readout8/8 at2/4 hops on both grids, cross-module A4 also8/8; global energy6/8, A6 fails detectability/accuracy. Energy loses inversion sign; signed UV resolves it at2/4. Effective participation never reaches registered8 at held-out checkpoints (max6.875909); dual-energy classification fails. All physical numerical gates pass; no learning/recall or nonlinear emergence claim.
 
 - 2026-11-15: 0009 registration17ee680, standalone/methodc07dac9 before data.17 actual fluid-only executions,68 full fields,580 independent gates. S1/S8 fail:30 energy-report discrepancies>1e-12 and LOW continuum-error reduction0.869709>0.35. Summation roundoff and spatial/temporal dispersion cancellation diagnosed without changing verdicts. All445 conditional neural/calibration cases explicitly NOT_RUN; S2–S7 indeterminate. No immersed-neuron communication result.
+
+## Experiment 0010 — numerical rehabilitation and controlled neural-fluid coupling
+
+Independent [registration](../EXPERIMENT_0010.md), [schema](EXPERIMENT_0010_SCHEMA.md)
+and [measured report](EXPERIMENT_0010_RESULTS.md). QR9 stays a historical FAIL.
+QR10 separates physical accuracy, fixed-space temporal order, fixed-time spatial
+order, conservation/accounting and reliability; Level A gates a stationary actual
+QR-neuron pilot, while Level B gates stronger quantitative claims. Consult the
+report and execution ledgers for actual PASS/FAIL/INDETERMINATE and NOT RUN states.
+No overall score, plasticity, learning, memory or mobile geometry claim.
+
+Measured:159 actual simulations,2 calibration reuses. Numerical A..E and Levels
+A/B pass for registered fixtures. Emission/reception, reciprocal accounting,
+controls and signed interference pass; **all9 held-out S9/S27 decoders FAIL**.
+C5 retains22 resolved band comparisons and14 INDETERMINATE. Full failures,
+work/uncertainty budgets and original QR9 FAIL remain inspectable in the report.

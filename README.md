@@ -382,3 +382,39 @@ signed UV resolves sign at2/4 hops. Registered broad-participation and dual-ener
 discrimination gates fail. P1/P4/P6 pass; no overall success score or memory claim.
 All97 cases,582 signed/energy checkpoints,404 readout models and9696 predictions
 are retained with complete negative/ambiguous and numerical evidence.
+
+## Experiment 0010: numerical rehabilitation and stationary neural-fluid coupling
+
+[Registration](EXPERIMENT_0010.md) freezes separate physical-accuracy, temporal,
+spatial, conservation and reliability tests, with exploratory Level A and stronger
+Level B. Historical QR9 remains FAIL. The independent QR10 solver retains its
+physical updates and replaces energy accumulation with deterministic Neumaier
+summation. The [schema](docs/EXPERIMENT_0010_SCHEMA.md) records signed full fields;
+large evidence and archives remain under ignored `results/experiment_0010`.
+
+```sh
+cargo build --locked --release --bin experiment_0010
+target/release/experiment_0010 standalone results/my-0010-numerical
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.experiment_0010 results/my-0010-numerical
+# Pilot requires the independent Level A receipt:
+cargo build --locked --release --bin coupling_0010
+target/release/coupling_0010 results/my-0010-pilot results/my-0010-numerical
+.venv/bin/python -m analysis.audit_coupling_0010 results/my-0010-pilot
+# Extended stages require the independently passed pilot (see portable instructions).
+# Complete delivery root has numerical/ plus provenance and conditional stages:
+.venv/bin/python -m analysis.report_experiment_0010 results/experiment_0010
+.venv/bin/python -m analysis.package_experiment_0010 results/experiment_0010 --downloads /home/cognis/Downloads
+```
+
+Read [measured results](docs/EXPERIMENT_0010_RESULTS.md) for actual category and
+stage outcomes. Process completion never substitutes for a scientific verdict.
+Only Level A authorizes the pilot; pilot uncertainty controls the extended matrix.
+No learning, memory, mobile geometry or4096-neuron scaling is authorized here.
+
+[Measured Experiment0010 results](docs/EXPERIMENT_0010_RESULTS.md): all five
+numerical categories and standalone Levels A/B pass. Actual QR neurons emit and
+receive through reciprocal stationary fluid coupling, with independent work
+accounting and signed interference validation. **All nine fixed cross-seed
+S9/S27 decoders fail**, despite valid numerical refinement. All159 simulations,
+503 fluid fields,399 neural checkpoints,47 held-out prediction errors and14
+indeterminate band comparisons are retained. No learning or memory result.

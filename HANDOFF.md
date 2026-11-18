@@ -1,6 +1,8 @@
 # QR Neural Memory System — handoff
 
-Updated: 2026-11-13 (America/Toronto).
+Updated: 2026-11-18 (America/Toronto).
+
+Current delivery: Experiment0010; see the final section for current evidence.
 
 ## Rehydrate
 
@@ -866,3 +868,81 @@ mean delivery checks pending. Quick_Review and Full_Fields ZIPs in Downloads
 must pass CRC/member/copy SHA plus fresh extracted Rust build/test, all144
 historical preservation hashes and full independent68-field/580-gate rerun,
 including identical31failures. Exact final HEAD/remote/hosted CI are separate.
+
+
+## Experiment 0010 — numerical rehabilitation and controlled neural-fluid coupling
+
+Registration9a3bb58 against clean baseline457c2f9 precedes implementation1df11d1.
+All160 historical protected files match docs/EXPERIMENT_0010_PROTECTED_SHA256.txt.
+QR9 remains historical FAIL. New solver copies its physics exactly; only energy
+report accumulation is changed to deterministic Neumaier. No hidden correction.
+Read EXPERIMENT_0010.md, docs/EXPERIMENT_0010_SCHEMA.md and measured results.
+
+Numerical completed:26 serial runs,104 full signed q/w checkpoints, including
+240-unit HIGH reliability run. Independent audit categories A/B/C/D/E all PASS,
+Level A and standalone Level B PASS. Energy reconstruction versus Python fsum
+is exactly equal at exported f64 precision for every checkpoint; unchanged1e-12
+limit. Naive reference discrepancy reaches2.82239417e-11. Actual energy drift
+maximum.134719063%; physical N>=48 continuum error maximum.853238773%.
+N24 coarse spatial diagnostics reach13.2470% and are explicitly excluded from
+primary physical gates; long240 has no physical-accuracy claim. Temporal observed
+order2.00004..2.00070; corrected spatial3.92850..3.99559. Raw continuum errors
+and exact split residuals remain available, without correction to observations.
+
+Pilot implemented only after independent Level A:489dc6d, actual two isolated
+64-module QR neurons with unchanged generator palettes2182/2186, QR6 omega/gamma
+and internal-cardinal equations. Homogeneous parity against unmodified QR6 passes.
+External QR graph edges disabled; explicit engineered beta.1 reciprocal pressure/
+neural-velocity rotations at9/27, width1.5m normalized tensor hats. Each external
+kick and each rotation records state/work for independent Python reconstruction.
+No force-cache reuse after coupling kicks, no plasticity or history adaptation.
+19 pilot cases complete; C1/C2/C3/C7 and extension prerequisite PASS. Temporal
+receiver full-history error.2231%/.2502%; spatial1.9370%/2.0425%, source-work
+refinement<.127%. Zero/off/frozen/receiver-only/source-only controls and raw repeat
+pass. DIRECT is an explicitly artificial spring, not a historical d-hop path.
+At2m hats overlap; this is not isolated-support propagation-delay evidence.
+
+The template-count typo is documented BEFORE extended outcomes in
+ docs/EXPERIMENT_0010_EXECUTION_CLARIFICATIONS.md:9 decoders/18 class vectors,
+not18 distinct decoders. No criteria, seed, feature, grid or amplitude changed.
+Extended engine1efedac; decoder194afd7.34 new calibration plus2 explicit pilot
+reuses completed; templates frozen before any held-out run. Fitting/classification
+AST remains unchanged after later passive C5 reporting additions; original source
+snapshots and template/source hashes are preserved outside Git.
+
+COMPLETED SCIENCE:159 actual executions +2 explicit calibration reuses;
+503 full signed fluid checkpoints,399 full actual-neuron checkpoints.
+Case wall1210.765447s (<1800s), raw case data5714378729bytes (<8GB).
+Numerical A..E/Level A/standalone Level B PASS. Coupled C1 emission,C2 reception,
+C3 accounting,C7 reliability PASS across pilot/train/held stages. C6 signed
+interference PASS, maximum residual below1e-10 (see measured report for exact).
+All9 C4 decoders FAIL on valid refined observations: primary11/36 correct,
+fine14/36 correct;25/72 total,47 errors,0 ties. Calibration diagnostics18/36
+correct. Feature refinement2.13..3.24%, separation/grid discrepancy>=12.24.
+No threshold refit or seed replacement; all predictions retained. This is a
+failed fixed cross-seed readout, not proof that every possible readout fails.
+C5 paired normalized band differences:22 PASS,14 INDETERMINATE under registered
+5x uncertainty criterion. No universal LOW advantage or material-loss claim.
+2m transducer supports overlap;4/6m supports are disjoint and actual receivers
+respond through the fluid with direct QR graph edges disabled.
+
+Final report docs/EXPERIMENT_0010_RESULTS.md answers all7 scientific questions;
+6 actual-data figures cover accuracy, convergence, energy/reporting, propagation,
+reception, discrimination and signed interference. Actual source palettes are
+independently reconstructed from seed/ID in Python; every external kick,
+transducer rotation and signed all-tick exchange observation is rechecked.
+Audits reconstruct fields/energy/work, not a second full PDE integration.
+Delivery validation is recorded separately in ignored delivery-status.json,
+delivery.json and archive-validation.json. Inspect those actual receipts for
+archive/fresh-extraction, pushed SHA and hosted CI completion; absent receipts
+are pending, never evidence of success. Next bounded research
+requires a NEW registration addressing failed cross-seed discrimination; never
+retune or overwrite0010, nor infer learned memory from signal detection.
+
+All physics CPU/serial; budget30min physics/<8GB raw. Root43Rust,38Python and
+3viewer tests plus strict fmt/lint/release/docs/compile checks passed locally;
+final38Python tests and strict Ruff/compile rechecks also pass after the analysis
+audit/report additions. No native window/GPU/FPS claim. Original/source-freeze execution receipts,
+raw observations, all failures/ambiguities and final packages stay outside Git.
+No learning, scaling, movement, real-material attenuation, or memory claim.
+Principle 002 is a proposed mechanism, not an experimentally established law.
