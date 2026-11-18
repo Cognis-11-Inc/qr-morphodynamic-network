@@ -12,6 +12,18 @@ from analysis import experiment_0010 as fluid
 from analysis.experiment_0005 import require
 
 
+def seeded_palette(seed, neuron_id):
+    """Independent random-access reconstruction of the unchanged SplitMix palette."""
+    mask = (1 << 64) - 1
+    colors = []
+    for module in range(64):
+        x = (seed + 0x9E3779B97F4A7C15 * (neuron_id * 64 + module + 1)) & mask
+        x = ((x ^ (x >> 30)) * 0xBF58476D1CE4E5B9) & mask
+        x = ((x ^ (x >> 27)) * 0x94D049BB133111EB) & mask
+        colors.append((x ^ (x >> 31)) % 5)
+    return np.array(colors)
+
+
 def coefficients(palette):
     p = np.asarray(palette).reshape(8, 8)
     occupied = np.zeros((8, 8), dtype=int)
@@ -146,6 +158,14 @@ def audit(root, extended=False):
         n = int(m["n"])
         module = int(m["module"])
         control = m["control"]
+        identity = condition(
+            int(m["seed"]), module, int(m["band"]), int(m["distance"]), n, dt, control
+        )
+        require(
+            identity == name
+            or (name.endswith("_REPEAT") and identity == name.replace("_REPEAT", "_FLUID")),
+            "actual case metadata identity",
+        )
         rows = old.rows(folder / "metrics.csv")
         ticks = round(24 / dt)
         require(len(rows) == ticks + 1, "all ticks")
@@ -293,6 +313,11 @@ def audit(root, extended=False):
             p, u, v = neural(folder / f"{tick:06}.neuron.csv")
             if initial_palette is None:
                 initial_palette = p.copy()
+                for id, palette_id in enumerate((2182, 2186, 2184)[: len(p)]):
+                    require(
+                        np.array_equal(p[id], seeded_palette(int(m["seed"]), palette_id)),
+                        "independent actual QR palette provenance",
+                    )
             gate("C7", name, f"frozen_palette_t{tick}", float(np.max(abs(p - initial_palette))))
             for id in (0, 1):
                 actual = (
@@ -357,6 +382,26 @@ def audit(root, extended=False):
                 peak_receiver=peak_receiver,
                 receiver_per_work=peak_receiver / max(work, 1e-30),
                 balance=residual,
+                fluid_balance=max(
+                    abs(
+                        float(r["fluid_energy"]) - float(r["source_net"]) - float(r["receiver_net"])
+                    )
+                    for r in rows
+                )
+                / scale,
+                neural_balance=max(
+                    abs(
+                        float(r["source_energy"])
+                        + float(r["receiver_energy"])
+                        + float(r["direct_energy"])
+                        + float(r["loss"])
+                        + float(r["source_net"])
+                        + float(r["receiver_net"])
+                        - float(r["work"])
+                    )
+                    for r in rows
+                )
+                / scale,
             )
         )
     refinements = []
@@ -408,7 +453,8 @@ def audit(root, extended=False):
         schema=1,
         executions=expected,
         verdicts=verdicts,
-        extended_authorized=all(v == "PASS" for v in verdicts.values()),
+        extended_authorized=all(v == "PASS" for v in verdicts.values()) if not extended else None,
+        pilot_extension_gate_applicable=not extended,
         failures=[g for g in gates if g["verdict"] == "FAIL"],
         C4="INDETERMINATE",
         C4_execution="See communication-verification.json"

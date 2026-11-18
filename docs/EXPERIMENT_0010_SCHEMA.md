@@ -69,3 +69,32 @@ The width1.5m tensor hats overlap at2m separation. A causal receiver response
 therefore does not alone prove delay across disjoint supports or long-range
 transport. The conditional4/6m cases have disjoint supports. This geometric
 limitation must remain attached to any2m pilot observation.
+
+## Extended matrix and frozen readout
+
+Metadata schema2 marks three-neuron interference observations; the separate
+third_neuron.csv gives its generator identity and coordinates. Two-neuron
+extended cases retain schema1, with kicks.csv adding explicit driven-neuron ID.
+Readers accept the pilot's implicit source0 and extended explicit ID. Interference
+source_energy/source exchange aggregate emitters0/2; receiver1 remains separate.
+Every actual neuron still has64 independently recorded palette/u/v modules.
+
+Extended train/evaluate/interference directories each have exact plans, events
+and completion ledgers. reuses.csv maps the two original pilot calibration cases
+without synthesizing new executions. templates.json freezes9 numeric decoders,
+18 class vectors of12928 scalars and calibration input SHA256 before held-out
+execution. TEMPLATES_SHA256.txt binds the untouched frozen file. Decoder fitting
+source is identified in that file and preserved in source-freezes/194afd7.tar.gz;
+later C5 reporting additions do not refit means or change predictions.
+
+predictions.csv retains all72 grid-specific held-out predictions, both class
+distances and ties/errors. decoders.csv and uncertainty.csv keep each independent
+band/distance gate and separation/grid-error budget. responses.csv records
+work, positive emission/backflow, receiver peak per work/per positive emission,
+arrival and peak time for every held-out case. signed_spectra.csv preserves real
+and imaginary DFT pressure coefficients with actual normalized frequencies.
+band_comparisons.csv applies the registered5x measured uncertainty criterion,
+requiring standalone Level B and coupled numerical validity. interference.csv
+contains all signed superposition residuals and signed fluid-energy cross terms.
+These are measured deterministic finite-case results, not statistical population
+accuracy, physical seawater attenuation or associative memory.
