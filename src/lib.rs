@@ -45,3 +45,6 @@ mod tests {
         assert!(!empty_activation_state()[0]);
     }
 }
+
+/// Independently registered QR10 compensated acoustic substrate.
+pub mod acoustic_0010;
