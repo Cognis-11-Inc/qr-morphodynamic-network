@@ -88,6 +88,8 @@ def audit(root):
         for i, row in enumerate(metrics):
             require(int(row["tick"]) == i and float(row["time"]) == i * dt, "clock")
             require(all(math.isfinite(float(x)) for x in row.values()), "finite diagnostics")
+        probes = old.rows(folder / "probes.csv")
+        require(len(probes) == (ticks + 1) * 21, "probe coverage")
         initial = float(metrics[0]["energy"])
         drift = max(abs(float(r["energy"]) - initial) for r in metrics) / max(initial, 1e-30)
         gate("D", name, "actual_energy_drift", drift, 0.001 if n == 96 else 0.003)
@@ -119,6 +121,25 @@ def audit(root):
                     float(np.max(abs(field[axis + 1][tuple(wall)]))),
                     0,
                 )
+            cell_density = old.density(field)
+            for probe in probes[tick * 21 : (tick + 1) * 21]:
+                require(int(probe["tick"]) == tick, "probe clock")
+                point = [12.0] * 3
+                point[int(probe["axis"])] += float(probe["offset"])
+                measured = np.array(
+                    [float(probe[k]) for k in ("q", "wx", "wy", "wz", "energy_density")]
+                )
+                require(
+                    np.allclose(
+                        measured,
+                        old.probe_sample(field, point, cell_density),
+                        rtol=1e-12,
+                        atol=1e-14,
+                    ),
+                    "probe reconstruction",
+                )
+            if name.startswith("gaussian") and time == 0:
+                gate("D", name, "initial_unit_energy", abs(actual - 1), 1e-12)
             obs = dict(
                 case=name,
                 time=time,
