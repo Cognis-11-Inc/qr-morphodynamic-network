@@ -3,6 +3,7 @@
 import argparse
 import json
 import math
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -303,6 +304,10 @@ def review(root):
 
 
 def interference(root):
+    @lru_cache(maxsize=16)
+    def full_field(folder, tick):
+        return fluid.decode(folder / f"{tick:06}.q10")["fields"]
+
     numerical = json.loads((root / "interference/verification.json").read_text())
     valid = all(numerical["verdicts"][q] == "PASS" for q in ("C3", "C7"))
     observations = []
@@ -328,9 +333,7 @@ def interference(root):
             )
             for time in (0, 12, 24):
                 tick = round(time / dt)
-                fields = {
-                    a: fluid.decode(f / f"{tick:06}.q10")["fields"] for a, f in folders.items()
-                }
+                fields = {a: full_field(f, tick) for a, f in folders.items()}
                 expected = fields["IA"] + sign * fields["IB"]
                 residual = old.relative(fields[arm], expected)
                 e = {a: fluid.energy(f, 24 / n) for a, f in fields.items()}
