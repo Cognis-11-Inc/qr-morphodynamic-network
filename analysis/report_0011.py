@@ -460,6 +460,23 @@ def document(root):
         text.append(
             f"\nL4 pilot verdict **{morph['L4']}**. Full failed numerical/structural gates remain in morph_pilot/gates.csv. Receiver edit consistency gates retention; source edits/refinement are independently reported and source morphology is restored before every causal receiver probe.\n"
         )
+        text += [
+            "| Condition | Node | Edited-position P/F Jaccard | Exact palette agreement |",
+            "|---|---|---|---|",
+        ]
+        for row in morph.get("numerical_morphology", []):
+            text.append(
+                f"| {row['condition']} | {row['neuron']} | {row['jaccard']:.9g} | {row['palette_equal']} |"
+            )
+        text += [
+            "\n| Primary receiver history | Palette positions different from S9 |",
+            "|---|---|",
+        ]
+        for label in ("S27", "ORDER", "NEG", "SINGLE", "SCRAMBLED"):
+            other = io.neurons(root / "morph_pilot" / (label + "_P") / "after.n11")["nodes"][1][
+                "palette"
+            ]
+            text.append(f"| {label} | {np.count_nonzero(other != p)} |")
     else:
         for ax in axes:
             ax.axis("off")
@@ -487,6 +504,36 @@ def document(root):
         text.append(
             f"L5 causal pilot **{retention['L5_causal']}**. Initial full fields/owned snapshots prove zero u/v,fluid,packets,previous pressure,405 traces,age,commit flags and work/loss/port accounts. Source palette is restored; only declared receiver palette persists. VIRGIN is a fresh body. RESTORED_S9 restores receiver palette at zero state. Probe waveform/amplitude identical across retained histories; actual work variation is separately gated1%. See reset.csv and retention_pilot/gates.csv.\n"
         )
+        text += [
+            "| Retained history | Grid | Full response difference / virgin norm | Absolute difference norm | Source work difference / virgin work |",
+            "|---|---|---|---|---|",
+        ]
+        for grid in ("P", "F"):
+            base = root / "retention_pilot" / ("VIRGIN_" + grid)
+            virgin = io.stream(base / "observations.q11o")["frames"]["nodes"][:, 1]
+            original = np.stack((virgin["u"], virgin["v"]), axis=-1).ravel()
+            work = float(rows(base / "metrics.csv")[-1]["work"])
+            for label in (
+                "S9",
+                "S27",
+                "ORDER",
+                "NEG",
+                "SINGLE",
+                "QUIET",
+                "OFF",
+                "TRACE_OFF",
+                "SCRAMBLED",
+                "FROZEN",
+                "RESTORED_S9",
+            ):
+                folder = root / "retention_pilot" / (label + "_" + grid)
+                node = io.stream(folder / "observations.q11o")["frames"]["nodes"][:, 1]
+                value = np.stack((node["u"], node["v"]), axis=-1).ravel()
+                delta = float(np.linalg.norm(value - original))
+                change = abs(float(rows(folder / "metrics.csv")[-1]["work"]) - work) / abs(work)
+                text.append(
+                    f"| {label} | {grid} | {delta / max(float(np.linalg.norm(original)), 1e-30):.9g} | {delta:.9g} | {change:.9g} |"
+                )
     else:
         ax.axis("off")
         ax.text(

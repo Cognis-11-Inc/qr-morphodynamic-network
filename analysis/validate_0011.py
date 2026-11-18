@@ -2,6 +2,7 @@
 
 import argparse
 import json
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 from analysis.audit_0011 import audit_stage
@@ -12,13 +13,15 @@ from analysis.morphology_0011 import retention_pilot, verify_operation
 from analysis.report_0011 import STAGES, ledger
 
 
-def validate(root):
+def validate(root, jobs=1):
     root = Path(root)
     checks = {}
-    for stage in STAGES:
-        folder = root / stage
-        if (folder / "ledger.csv").exists():
-            checks[stage] = audit_stage(folder, fresh=True)
+    stages = [stage for stage in STAGES if (root / stage / "ledger.csv").exists()]
+    # Independent analysis only: never launch or parallelize a physical trajectory.
+    with ProcessPoolExecutor(max_workers=jobs) as pool:
+        audits = {stage: pool.submit(audit_stage, root / stage, True) for stage in stages}
+        for stage, result in audits.items():
+            checks[stage] = result.result()
     checks["L1"] = l1(root)
     checks["pilot"] = pilot(root)
     for stage in ("morph_pilot", "morph_main"):
@@ -42,8 +45,9 @@ def validate(root):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("root", type=Path)
+    p.add_argument("--jobs", type=int, choices=range(1, 5), default=1)
     a = p.parse_args()
-    validate(a.root)
+    validate(a.root, a.jobs)
 
 
 if __name__ == "__main__":
