@@ -3,6 +3,7 @@
 import argparse
 import json
 import math
+import time
 from pathlib import Path
 
 import numpy as np
@@ -128,7 +129,7 @@ def force(signal, time):
     return 0.0
 
 
-def audit_case(folder, fresh=False):
+def _audit_case(folder, fresh=False):
     folder = Path(folder)
     cache = folder / "audit.json"
     raw = [
@@ -426,6 +427,30 @@ def audit_case(folder, fresh=False):
     return result
 
 
+def audit_case(folder, fresh=False):
+    folder = Path(folder)
+    # Analysis-only serialization; physical updates never run in this process.
+    with (folder.parent / ".audit.lock").open("a+") as lock:
+        try:
+            import fcntl
+        except ImportError:
+            return _audit_case(folder, fresh)
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        return _audit_case(folder, fresh)
+
+
+def follow(root):
+    root = Path(root)
+    for row in rows(root / "plan.csv"):
+        path = root / row["case"]
+        while not (path / "COMPLETE").exists():
+            require(not (root / "FAILED").exists(), "QR11 physical stage stopped")
+            time.sleep(0.5)
+        print("audit completed case", row["case"], flush=True)
+        audit_case(path)
+    print("Every case independently audited; aggregate gate remains separate.", flush=True)
+
+
 def audit_stage(root, fresh=False):
     root = Path(root)
     plan = rows(root / "plan.csv")
@@ -466,8 +491,9 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("root", type=Path)
     p.add_argument("--fresh", action="store_true")
+    p.add_argument("--follow", action="store_true")
     a = p.parse_args()
-    print(json.dumps(audit_stage(a.root, a.fresh), indent=2))
+    print(json.dumps(audit_stage(a.root, a.fresh), indent=2)) if not a.follow else follow(a.root)
 
 
 if __name__ == "__main__":
