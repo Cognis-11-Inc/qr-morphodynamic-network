@@ -45,12 +45,12 @@ def neuron_energy(palette, u, v):
 
 def neural(path):
     rows = old.rows(path)
-    require(len(rows) == 128, "two actual64-module neurons")
+    require(len(rows) in (128, 192), "actual64-module neurons")
     for i, r in enumerate(rows):
         require(int(r["neuron"]) == i // 64 and int(r["module"]) == i % 64, "neuron order")
-    p = np.array([int(r["palette"]) for r in rows]).reshape(2, 64)
-    u = np.array([float(r["u"]) for r in rows]).reshape(2, 64)
-    v = np.array([float(r["v"]) for r in rows]).reshape(2, 64)
+    p = np.array([int(r["palette"]) for r in rows]).reshape(-1, 64)
+    u = np.array([float(r["u"]) for r in rows]).reshape(-1, 64)
+    v = np.array([float(r["v"]) for r in rows]).reshape(-1, 64)
     require(
         ((p >= 0) & (p <= 4)).all() and np.isfinite(u).all() and np.isfinite(v).all(),
         "finite actual neuron state",
@@ -71,7 +71,7 @@ def history(folder):
     return np.array([[float(r["u"]), float(r["v"])] for r in rows]).reshape(241, 64, 2)
 
 
-def audit(root):
+def audit(root, extended=False):
     gates = []
     summaries = []
     histories = {}
@@ -92,9 +92,13 @@ def audit(root):
 
     ledger = old.rows(root / "ledger.csv")
     plan = old.rows(root / "plan.csv")
+    expected = (
+        {"train": 34, "evaluate": 72, "interference": 8}.get(root.name, 19) if extended else 19
+    )
     require(
-        len(plan) == len(ledger) == 19 and {r["case"] for r in plan} == {r["case"] for r in ledger},
-        "exact19 pilot cases",
+        len(plan) == len(ledger) == expected
+        and {r["case"] for r in plan} == {r["case"] for r in ledger},
+        "exact frozen cases",
     )
     require(all(r["status"] == "COMPLETE" for r in ledger), "pilot complete")
     for entry in ledger:
@@ -146,12 +150,19 @@ def audit(root):
             1e-12,
         )
         kicks = old.rows(folder / "kicks.csv")
-        require(len(kicks) == 2 * ticks, "kick coverage")
+        drives = {
+            "IA": ((0, 1), (2, 0)),
+            "IB": ((0, 0), (2, 1)),
+            "IAB+": ((0, 1), (2, 1)),
+            "IAB-": ((0, 1), (2, -1)),
+        }.get(control, ((0, 1),))
+        count = len(drives)
+        require(len(kicks) == 2 * ticks * count, "kick coverage")
         kick_work = np.zeros(ticks + 1)
         kick_positive = np.zeros(ticks + 1)
         for i, r in enumerate(kicks):
-            tick = i // 2 + 1
-            require(int(r["tick"]) == tick and int(r["half"]) == i % 2, "kick clock")
+            tick = i // (2 * count) + 1
+            require(int(r["tick"]) == tick and int(r["half"]) == (i // count) % 2, "kick clock")
             time = (tick - 0.5) * dt
             force = (
                 math.sin(2 * math.pi / [12, 8, 6][int(m["band"])] * time)
@@ -159,6 +170,9 @@ def audit(root):
                 if time <= 12 and control not in ("ZERO", "FROZEN")
                 else 0
             )
+            id, sign = drives[i % count]
+            require(int(r.get("neuron", 0)) == id, "kick source identity")
+            force *= sign
             before, after, impulse = (float(r[k]) for k in ("before", "after", "impulse"))
             require(abs(impulse - 0.5 * dt * force) <= 1e-14, "registered forcing")
             require(abs(after - before - impulse) <= 1e-14, "actual kick update")
@@ -227,8 +241,12 @@ def audit(root):
                 initial_palette = p.copy()
             gate("C7", name, f"frozen_palette_t{tick}", float(np.max(abs(p - initial_palette))))
             for id in (0, 1):
-                actual = neuron_energy(p[id], u[id], v[id])
-                reported = float(rows[tick]["source_energy" if id == 0 else "receiver_energy"])
+                actual = (
+                    neuron_energy(p[1], u[1], v[1])
+                    if id == 1
+                    else math.fsum(neuron_energy(p[j], u[j], v[j]) for j in range(len(p)) if j != 1)
+                )
+                reported = float(rows[tick]["receiver_energy" if id == 1 else "source_energy"])
                 gate(
                     "C3", name, f"neural_energy{id}_t{tick}", abs(actual - reported) / scale, 1e-12
                 )
@@ -288,47 +306,49 @@ def audit(root):
             )
         )
     refinements = []
-    for module in (9, 27):
-        prefix = f"s211_m{module}_b0_d2_"
-        a = prefix + "n48_dt0.05_FLUID"
-        base = histories[a]
-        for label, b in (
-            ("temporal", prefix + "n48_dt0.025_FLUID"),
-            ("spatial", prefix + "n96_dt0.025_FLUID"),
-        ):
-            relative = old.relative(base, histories[b])
-            ra = next(r for r in summaries if r["case"] == a)
-            rb = next(r for r in summaries if r["case"] == b)
-            workdiff = abs(ra["work"] - rb["work"]) / max(abs(rb["work"]), 1e-30)
-            gate("EXTENSION", a, label + "_remote_refinement", relative, 0.1)
-            gate("EXTENSION", a, label + "_source_work", workdiff, 0.02)
-            refinements.append(
-                dict(
-                    module=module,
-                    test=label,
-                    remote_relative=relative,
-                    source_work_relative=workdiff,
+    if not extended:
+        refinements = []
+        for module in (9, 27):
+            prefix = f"s211_m{module}_b0_d2_"
+            a = prefix + "n48_dt0.05_FLUID"
+            base = histories[a]
+            for label, b in (
+                ("temporal", prefix + "n48_dt0.025_FLUID"),
+                ("spatial", prefix + "n96_dt0.025_FLUID"),
+            ):
+                relative = old.relative(base, histories[b])
+                ra = next(r for r in summaries if r["case"] == a)
+                rb = next(r for r in summaries if r["case"] == b)
+                workdiff = abs(ra["work"] - rb["work"]) / max(abs(rb["work"]), 1e-30)
+                gate("EXTENSION", a, label + "_remote_refinement", relative, 0.1)
+                gate("EXTENSION", a, label + "_source_work", workdiff, 0.02)
+                refinements.append(
+                    dict(
+                        module=module,
+                        test=label,
+                        remote_relative=relative,
+                        source_work_relative=workdiff,
+                    )
                 )
-            )
-    original = root / "s211_m9_b0_d2_n48_dt0.05_FLUID"
-    repeat = root / "s211_m9_b0_d2_n48_dt0.05_REPEAT"
-    require(
-        sorted(p.name for p in original.iterdir()) == sorted(p.name for p in repeat.iterdir()),
-        "repeat coverage",
-    )
-    gate(
-        "C7",
-        "repeat",
-        "all_case_bytes",
-        sum(p.read_bytes() != (repeat / p.name).read_bytes() for p in original.iterdir()),
-    )
+        original = root / "s211_m9_b0_d2_n48_dt0.05_FLUID"
+        repeat = root / "s211_m9_b0_d2_n48_dt0.05_REPEAT"
+        require(
+            sorted(p.name for p in original.iterdir()) == sorted(p.name for p in repeat.iterdir()),
+            "repeat coverage",
+        )
+        gate(
+            "C7",
+            "repeat",
+            "all_case_bytes",
+            sum(p.read_bytes() != (repeat / p.name).read_bytes() for p in original.iterdir()),
+        )
     verdicts = {
         q: "FAIL" if any(g["verdict"] == "FAIL" for g in gates if g["question"] == q) else "PASS"
         for q in ("C1", "C2", "C3", "C7", "EXTENSION")
     }
     result = dict(
         schema=1,
-        executions=19,
+        executions=expected,
         verdicts=verdicts,
         extended_authorized=all(v == "PASS" for v in verdicts.values()),
         failures=[g for g in gates if g["verdict"] == "FAIL"],
@@ -351,7 +371,9 @@ def audit(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path)
-    audit(parser.parse_args().root)
+    parser.add_argument("--extended", action="store_true")
+    args = parser.parse_args()
+    audit(args.root, args.extended)
 
 
 if __name__ == "__main__":

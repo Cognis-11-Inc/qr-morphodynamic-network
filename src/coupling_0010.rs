@@ -247,10 +247,22 @@ fn case(root: &Path, c: &Condition) -> io::Result<()> {
         Neuron::new(lattice.neurons[2186].palette),
     ];
     let mut fluid = Fluid::new(c.n, c.dt)?;
-    let positions = [[10.5, 12.5, 12.5], [10.5 + number(c.distance), 12.5, 12.5]];
+    let interference = c.control.starts_with('I');
+    let mut positions = vec![[10.5, 12.5, 12.5], [10.5 + number(c.distance), 12.5, 12.5]];
+    if interference {
+        neurons.push(Neuron::new(lattice.neurons[2184].palette));
+        positions.push([10.5, 14.5, 12.5]);
+    }
+    let drives: Vec<(usize, f64)> = match c.control.as_str() {
+        "IA" => vec![(0, 1.), (2, 0.)],
+        "IB" => vec![(0, 0.), (2, 1.)],
+        "IAB+" => vec![(0, 1.), (2, 1.)],
+        "IAB-" => vec![(0, 1.), (2, -1.)],
+        _ => vec![(0, 1.)],
+    };
     let mut ports = Vec::new();
     if !["OFF", "DIRECT", "FROZEN", "ZERO"].contains(&c.control.as_str()) {
-        for (id, position) in positions.into_iter().enumerate() {
+        for (id, position) in positions.iter().copied().enumerate() {
             if (id == 0 && c.control == "RECEIVER_ONLY") || (id == 1 && c.control == "SOURCE_ONLY")
             {
                 continue;
@@ -260,7 +272,7 @@ fn case(root: &Path, c: &Condition) -> io::Result<()> {
             }
         }
     }
-    let metadata = format!(
+    let mut metadata = format!(
         "schema,seed,module,band,distance,n,dt,control,source_x,source_y,source_z,receiver_x,receiver_y,receiver_z\n1,{},{},{},{},{},{},{},10.5,12.5,12.5,{},12.5,12.5\n",
         c.seed,
         c.module,
@@ -275,14 +287,23 @@ fn case(root: &Path, c: &Condition) -> io::Result<()> {
         },
         10.5 + number(c.distance)
     );
+    if interference {
+        metadata = metadata.replacen("\n1,", "\n2,", 1);
+    }
     fs::write(dir.join("metadata.csv"), metadata)?;
+    if interference {
+        fs::write(
+            dir.join("third_neuron.csv"),
+            "neuron,palette_id,x,y,z\n2,2184,10.5,14.5,12.5\n",
+        )?;
+    }
     let mut metrics = BufWriter::new(fs::File::create(dir.join("metrics.csv"))?);
     writeln!(
         metrics,
         "tick,time,fluid_energy,source_energy,receiver_energy,loss,work,positive_work,direct_energy,exchange_cancellation,source_net,source_positive,source_backflow,receiver_net,receiver_positive,receiver_backflow"
     )?;
     let mut kicks = BufWriter::new(fs::File::create(dir.join("kicks.csv"))?);
-    writeln!(kicks, "tick,half,before,after,impulse")?;
+    writeln!(kicks, "tick,half,neuron,before,after,impulse")?;
     let mut exchanges = BufWriter::new(fs::File::create(dir.join("exchange.csv"))?);
     writeln!(
         exchanges,
@@ -307,17 +328,19 @@ fn case(root: &Path, c: &Condition) -> io::Result<()> {
             } else {
                 0.
             };
-            let before = neurons[0].v[c.module];
-            let dw = neurons[0].kick(c.module, 0.5 * c.dt * force);
-            writeln!(
-                kicks,
-                "{tick},{},{before:.17e},{:.17e},{:.17e}",
-                i32::from(fluid.tick == tick),
-                neurons[0].v[c.module],
-                0.5 * c.dt * force
-            )?;
-            work += dw;
-            positive_work += dw.max(0.);
+            for &(id, sign) in &drives {
+                let before = neurons[id].v[c.module];
+                let impulse = 0.5 * c.dt * force * sign;
+                let dw = neurons[id].kick(c.module, impulse);
+                writeln!(
+                    kicks,
+                    "{tick},{},{id},{before:.17e},{:.17e},{impulse:.17e}",
+                    i32::from(fluid.tick == tick),
+                    neurons[id].v[c.module]
+                )?;
+                work += dw;
+                positive_work += dw.max(0.);
+            }
             for port in &mut ports {
                 let r = port.rotate(&mut fluid, &mut neurons, 0.5 * c.dt);
                 writeln!(
@@ -360,17 +383,19 @@ fn case(root: &Path, c: &Condition) -> io::Result<()> {
                     r[5]
                 )?;
             }
-            let before = neurons[0].v[c.module];
-            let dw = neurons[0].kick(c.module, 0.5 * c.dt * force);
-            writeln!(
-                kicks,
-                "{tick},{},{before:.17e},{:.17e},{:.17e}",
-                i32::from(fluid.tick == tick),
-                neurons[0].v[c.module],
-                0.5 * c.dt * force
-            )?;
-            work += dw;
-            positive_work += dw.max(0.);
+            for &(id, sign) in &drives {
+                let before = neurons[id].v[c.module];
+                let impulse = 0.5 * c.dt * force * sign;
+                let dw = neurons[id].kick(c.module, impulse);
+                writeln!(
+                    kicks,
+                    "{tick},{},{id},{before:.17e},{:.17e},{impulse:.17e}",
+                    i32::from(fluid.tick == tick),
+                    neurons[id].v[c.module]
+                )?;
+                work += dw;
+                positive_work += dw.max(0.);
+            }
         }
         if !neurons
             .iter()
@@ -387,9 +412,42 @@ fn case(root: &Path, c: &Condition) -> io::Result<()> {
         };
         let totals = |id: usize| {
             [
-                accurate_sum(ports.iter().filter(|p| p.neuron == id).map(|p| p.net)),
-                accurate_sum(ports.iter().filter(|p| p.neuron == id).map(|p| p.positive)),
-                accurate_sum(ports.iter().filter(|p| p.neuron == id).map(|p| p.negative)),
+                accurate_sum(
+                    ports
+                        .iter()
+                        .filter(|p| {
+                            if id == 0 {
+                                p.neuron != 1
+                            } else {
+                                p.neuron == 1
+                            }
+                        })
+                        .map(|p| p.net),
+                ),
+                accurate_sum(
+                    ports
+                        .iter()
+                        .filter(|p| {
+                            if id == 0 {
+                                p.neuron != 1
+                            } else {
+                                p.neuron == 1
+                            }
+                        })
+                        .map(|p| p.positive),
+                ),
+                accurate_sum(
+                    ports
+                        .iter()
+                        .filter(|p| {
+                            if id == 0 {
+                                p.neuron != 1
+                            } else {
+                                p.neuron == 1
+                            }
+                        })
+                        .map(|p| p.negative),
+                ),
             ]
         };
         let a = totals(0);
@@ -399,7 +457,13 @@ fn case(root: &Path, c: &Condition) -> io::Result<()> {
             "{tick},{:.17e},{:.17e},{:.17e},{:.17e},{loss:.17e},{work:.17e},{positive_work:.17e},{direct:.17e},{:.17e},{:.17e},{:.17e},{:.17e},{:.17e},{:.17e},{:.17e}",
             number(tick) * c.dt,
             fluid.energy(),
-            neurons[0].energy(),
+            accurate_sum(
+                neurons
+                    .iter()
+                    .enumerate()
+                    .filter(|(id, _)| *id != 1)
+                    .map(|(_, n)| n.energy())
+            ),
             neurons[1].energy(),
             accurate_sum(ports.iter().map(|p| p.cancellation)),
             a[0],
@@ -527,6 +591,105 @@ pub fn pilot(root: &Path, numerical: &Path) -> io::Result<()> {
     fs::write(
         root.join("COMPLETE"),
         b"19 pilot executions; independent verdict pending.\n",
+    )
+}
+
+/// Execute frozen calibration, held-out or interference stages after the pilot gate.
+/// # Errors
+/// Requires independent pilot authorization and frozen templates for held-out work.
+pub fn extended(root: &Path, pilot: &Path, stage: &str) -> io::Result<()> {
+    let receipt = fs::read_to_string(pilot.join("verification.json"))?;
+    if !receipt.contains("\"extended_authorized\": true") {
+        return Err(io::Error::other("QR10 pilot prerequisite"));
+    }
+    if stage == "train" {
+        fs::create_dir(root)?;
+    } else if !fs::read_to_string(root.join("templates.json"))?.contains("\"frozen\": true") {
+        return Err(io::Error::other("frozen independent templates required"));
+    }
+    let folder = root.join(stage);
+    fs::create_dir(&folder)?;
+    fs::write(folder.join("events.csv"), "case,status\n")?;
+    fs::write(folder.join("ledger.csv"), "case,elapsed_seconds,status\n")?;
+    let mut plan = Vec::new();
+    match stage {
+        "train" | "evaluate" => {
+            let seeds = if stage == "train" {
+                [211, 223]
+            } else {
+                [227, 229]
+            };
+            for seed in seeds {
+                for band in 0..3 {
+                    for distance in [2, 4, 6] {
+                        for module in [9, 27] {
+                            if stage == "train" && seed == 211 && band == 0 && distance == 2 {
+                                continue;
+                            }
+                            plan.push(Condition {
+                                seed,
+                                module,
+                                band,
+                                distance,
+                                n: 48,
+                                dt: 0.05,
+                                control: "FLUID".into(),
+                            });
+                        }
+                    }
+                }
+            }
+            if stage == "evaluate" {
+                let fine: Vec<_> = plan
+                    .iter()
+                    .cloned()
+                    .map(|mut c| {
+                        c.n = 96;
+                        c.dt = 0.025;
+                        c
+                    })
+                    .collect();
+                plan.extend(fine);
+            }
+        }
+        "interference" => {
+            for (n, dt) in [(48, 0.05), (96, 0.025)] {
+                for control in ["IA", "IB", "IAB+", "IAB-"] {
+                    plan.push(Condition {
+                        seed: 211,
+                        module: 9,
+                        band: 0,
+                        distance: 4,
+                        n,
+                        dt,
+                        control: control.into(),
+                    });
+                }
+            }
+        }
+        _ => return Err(io::Error::other("QR10 extended stage")),
+    }
+    let mut plan_text = String::from("case,initial_status\n");
+    for c in &plan {
+        use std::fmt::Write as _;
+        writeln!(plan_text, "{},NOT_RUN", c.label()).unwrap();
+    }
+    fs::write(folder.join("plan.csv"), plan_text)?;
+    if stage == "train" {
+        fs::write(
+            root.join("reuses.csv"),
+            "case,source,status\ns211_m9_b0_d2_n48_dt0.05_FLUID,../pilot/s211_m9_b0_d2_n48_dt0.05_FLUID,REUSED\ns211_m27_b0_d2_n48_dt0.05_FLUID,../pilot/s211_m27_b0_d2_n48_dt0.05_FLUID,REUSED\n",
+        )?;
+    }
+    for c in plan {
+        if let Err(error) = case(&folder, &c) {
+            fs::write(folder.join("FAILED"), format!("{}: {error}", c.label()))?;
+            return Err(error);
+        }
+    }
+    fs::write(
+        folder.join("COMPLETE"),
+        b"Stage executed; independent audit pending.\n",
     )
 }
 
