@@ -164,6 +164,7 @@ def pilot(root):
     for label in ("QUIET", "OFF", "TRACE_OFF", "FROZEN"):
         for grid in ("P", "F"):
             g(label + "_receiver_edits_" + grid, results[label + "_" + grid]["nodes"][1]["edits"])
+    numerical_morphology = []
     for label in ("S9", "S27", "ORDER"):
         a = io.neurons(dest / (label + "_P") / "after.n11")["nodes"]
         b = io.neurons(dest / (label + "_F") / "after.n11")["nodes"]
@@ -173,6 +174,16 @@ def pilot(root):
             ea = set(np.flatnonzero(a[id]["palette"] != av[id]["palette"]))
             eb = set(np.flatnonzero(b[id]["palette"] != bv[id]["palette"]))
             jaccard = len(ea & eb) / len(ea | eb) if ea | eb else 1.0
+            numerical_morphology.append(
+                dict(
+                    condition=label,
+                    neuron=id,
+                    jaccard=jaccard,
+                    palette_equal=bool(np.array_equal(a[id]["palette"], b[id]["palette"])),
+                    primary_positions=sorted(int(x) for x in ea),
+                    fine_positions=sorted(int(x) for x in eb),
+                )
+            )
             if id == 1:
                 g(label + "_receiver_edit_disagreement", 1 - jaccard, 0.1)
     for file in ("after.n11", "scores.csv", "swaps.csv", "commit.csv"):
@@ -189,6 +200,7 @@ def pilot(root):
         operations=len(plan),
         gates=gate,
         all_nodes=results,
+        numerical_morphology=numerical_morphology,
     )
     old.csv_write(dest / "gates.csv", gate)
     (dest / "gates.json").write_text(json.dumps(result, indent=2) + "\n")
@@ -423,7 +435,15 @@ def main():
     )
     p.add_argument("root", type=Path)
     a = p.parse_args()
-    {"pilot": pilot, "probe-plan": probe_plan, "retention-pilot": retention_pilot}[a.stage](a.root)
+    if a.stage in ("retention-train", "retention-held"):
+        retention_plan(a.root, a.stage.replace("-", "_"))
+    else:
+        {
+            "pilot": pilot,
+            "probe-plan": probe_plan,
+            "retention-pilot": retention_pilot,
+            "main": main_operations,
+        }[a.stage](a.root)
 
 
 if __name__ == "__main__":

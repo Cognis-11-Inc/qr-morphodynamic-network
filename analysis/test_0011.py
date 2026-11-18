@@ -56,10 +56,6 @@ class ListeningTests(unittest.TestCase):
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class ScientificBoundaryTests(unittest.TestCase):
     def test_external_features_exclude_the_actuated_source(self):
         from analysis.audit_0011 import signature
@@ -126,3 +122,7 @@ class ScientificBoundaryTests(unittest.TestCase):
             save(root / "after.n11", after)
             with self.assertRaises(ValueError):
                 verify_operation(root, True)
+
+
+if __name__ == "__main__":
+    unittest.main()
