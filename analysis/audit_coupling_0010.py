@@ -151,7 +151,7 @@ def audit(root, extended=False):
     for entry in ledger:
         name = entry["case"]
         folder = root / name
-        print("audit pilot", name, flush=True)
+        print("audit coupled case", name, flush=True)
         m = old.rows(folder / "metadata.csv")[0]
         metadata[name] = m
         dt = float(m["dt"])
@@ -172,6 +172,11 @@ def audit(root, extended=False):
         for i, r in enumerate(rows):
             require(int(r["tick"]) == i and float(r["time"]) == i * dt, "metric clock")
             require(all(math.isfinite(float(x)) for x in r.values()), "finite metrics")
+        probes = old.rows(folder / "probes.csv")
+        require(len(probes) == 241, "fluid probe coverage")
+        for i, r in enumerate(probes):
+            require(int(r["tick"]) == round(i * 0.1 / dt), "fluid probe clock")
+            require(all(math.isfinite(float(x)) for x in r.values()), "finite probe data")
         h = history(folder)
         histories[name] = h
         work = float(rows[-1]["work"])
@@ -289,6 +294,36 @@ def audit(root, extended=False):
                 abs(df - 0.5 * (xa * xa - xb * xb)) <= 1e-12 * scale,
                 "fluid projection exchange reconstruction",
             )
+        exchange_observations = np.zeros((7, ticks + 1))
+        for r in exchange:
+            tick = int(r["tick"])
+            df = float(r["fluid_delta"])
+            dn = float(r["neural_delta"])
+            offset = 3 if int(r["neuron"]) == 1 else 0
+            exchange_observations[offset, tick] += df
+            exchange_observations[offset + 1, tick] += max(df, 0)
+            exchange_observations[offset + 2, tick] += max(-df, 0)
+            exchange_observations[6, tick] += abs(df + dn)
+        for index, key in enumerate(
+            (
+                "source_net",
+                "source_positive",
+                "source_backflow",
+                "receiver_net",
+                "receiver_positive",
+                "receiver_backflow",
+                "exchange_cancellation",
+            )
+        ):
+            require(
+                np.allclose(
+                    np.cumsum(exchange_observations[index]),
+                    [float(r[key]) for r in rows],
+                    rtol=1e-12,
+                    atol=1e-13 * scale,
+                ),
+                "independent all-tick exchange observation " + key,
+            )
         for port in old.rows(folder / "ports.csv"):
             selected = [
                 r
@@ -310,6 +345,19 @@ def audit(root, extended=False):
         for tick in (0, ticks // 2, ticks):
             field = fluid.decode(folder / f"{tick:06}.q10")
             require((field["n"], field["dt"], field["tick"]) == (n, dt, tick), "fluid clock")
+            recorded_probe = probes[round(tick * dt / 0.1)]
+            actual_probe = old.probe_sample(
+                field["fields"], [10.5 + float(m["distance"]), 12.5, 12.5]
+            )
+            require(
+                np.allclose(
+                    actual_probe,
+                    [float(recorded_probe[k]) for k in ("q", "wx", "wy", "wz", "density")],
+                    rtol=1e-12,
+                    atol=1e-14 * math.sqrt(scale),
+                ),
+                "full-field remote fluid probe reconstruction",
+            )
             p, u, v = neural(folder / f"{tick:06}.neuron.csv")
             if initial_palette is None:
                 initial_palette = p.copy()
