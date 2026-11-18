@@ -86,6 +86,7 @@ def review(root):
     decoders = []
     uncertainties = []
     responses = []
+    feature_valid = {}
     for model in frozen["models"]:
         band, distance = model["band"], model["distance"]
         correct = {"primary": 0, "fine": 0}
@@ -157,6 +158,7 @@ def review(root):
                 refinement = old.relative(vectors["primary"][label], vectors["fine"][label])
                 max_refinement = max(max_refinement, refinement)
                 valid &= refinement <= 0.1
+                feature_valid[band, distance, seed, (9, 27)[label]] = refinement <= 0.1
                 pa = classify(vectors["primary"][label], model["means"])[0]
                 pb = classify(vectors["fine"][label], model["means"])[0]
                 stable &= pa == pb
@@ -204,6 +206,44 @@ def review(root):
         ("responses.csv", responses),
     ):
         old.csv_write(root / name, records)
+    band_comparisons = []
+    lookup = {(r["band"], r["distance"], r["seed"], r["module"], r["grid"]): r for r in responses}
+    level_b = (
+        json.loads((root.parent / "numerical/verification.json").read_text())["level_B"] == "PASS"
+    )
+    for distance in (2, 4, 6):
+        for seed in (227, 229):
+            for module in (9, 27):
+                for a, b in ((0, 1), (0, 2), (1, 2)):
+                    ap = lookup[a, distance, seed, module, "primary"]["receiver_per_emitted"]
+                    af = lookup[a, distance, seed, module, "fine"]["receiver_per_emitted"]
+                    bp = lookup[b, distance, seed, module, "primary"]["receiver_per_emitted"]
+                    bf = lookup[b, distance, seed, module, "fine"]["receiver_per_emitted"]
+                    discrepancy = abs(ap - af) + abs(bp - bf)
+                    difference = abs(af - bf)
+                    # Registered difference criterion; no added ranking assumption.
+                    supported = (
+                        level_b
+                        and numeric_valid
+                        and feature_valid[a, distance, seed, module]
+                        and feature_valid[b, distance, seed, module]
+                        and difference > 5 * discrepancy
+                    )
+                    band_comparisons.append(
+                        dict(
+                            distance=distance,
+                            seed=seed,
+                            module=module,
+                            band_a=a,
+                            band_b=b,
+                            fine_a=af,
+                            fine_b=bf,
+                            absolute_difference=difference,
+                            grid_uncertainty=discrepancy,
+                            verdict="PASS" if supported else "INDETERMINATE",
+                        )
+                    )
+    old.csv_write(root / "band_comparisons.csv", band_comparisons)
     # All signed spectra retained, no presumed ranking or material absorption interpretation.
     spectra = []
     for r in responses:
@@ -231,6 +271,7 @@ def review(root):
         schema=1,
         C4=decoders,
         held_out_predictions=len(predictions),
+        C5=band_comparisons,
         all_incorrect_and_ties_retained=True,
         templates_sha256=receipt,
         scope="Finite stationary discrimination; no learning, memory or bitrate claim",
