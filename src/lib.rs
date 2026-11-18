@@ -50,3 +50,7 @@ mod tests {
 pub mod acoustic_0010;
 /// QR10 isolated actual QR neurons and reciprocal stationary transducers.
 pub mod coupling_0010;
+/// QR11 serial experiment cases and bounded morphology operations.
+pub mod experiment_0011;
+/// QR11 local online sensory traces and isolated-neuron morphology mechanics.
+pub mod listening_0011;
