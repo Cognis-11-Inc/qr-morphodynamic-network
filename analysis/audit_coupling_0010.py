@@ -100,6 +100,41 @@ def audit(root, extended=False):
         and {r["case"] for r in plan} == {r["case"] for r in ledger},
         "exact frozen cases",
     )
+
+    def condition(seed, module, band, distance, n=48, dt=0.05, control="FLUID"):
+        return f"s{seed}_m{module}_b{band}_d{distance}_n{n}_dt{dt}_{control}"
+
+    if not extended:
+        exact = {
+            condition(211, m, 0, 2, n, dt)
+            for m in (9, 27)
+            for n, dt in ((48, 0.05), (48, 0.025), (96, 0.025))
+        }
+        exact.update(
+            condition(211, m, 0, 2, control=c)
+            for m in (9, 27)
+            for c in ("ZERO", "OFF", "FROZEN", "SOURCE_ONLY", "RECEIVER_ONLY", "DIRECT")
+        )
+        exact.add(condition(211, 9, 0, 2, control="REPEAT"))
+    elif root.name == "interference":
+        exact = {
+            condition(211, 9, 0, 4, n, dt, c)
+            for n, dt in ((48, 0.05), (96, 0.025))
+            for c in ("IA", "IB", "IAB+", "IAB-")
+        }
+    else:
+        seeds = (211, 223) if root.name == "train" else (227, 229)
+        grids = ((48, 0.05),) if root.name == "train" else ((48, 0.05), (96, 0.025))
+        exact = {
+            condition(seed, m, b, d, n, dt)
+            for seed in seeds
+            for m in (9, 27)
+            for b in range(3)
+            for d in (2, 4, 6)
+            for n, dt in grids
+            if not (root.name == "train" and seed == 211 and b == 0 and d == 2)
+        }
+    require({r["case"] for r in ledger} == exact, "independently enumerated conditions")
     require(all(r["status"] == "COMPLETE" for r in ledger), "pilot complete")
     for entry in ledger:
         name = entry["case"]
@@ -195,6 +230,16 @@ def audit(root, extended=False):
             "independent positive work",
         )
         exchange = old.rows(folder / "exchange.csv")
+        coordinates = (np.arange(n) + 0.5) * (24 / n)
+        rates = {}
+        for id, position in enumerate(
+            ((10.5, 12.5, 12.5), (10.5 + float(m["distance"]), 12.5, 12.5), (10.5, 14.5, 12.5))
+        ):
+            norm_squared = 1.0
+            for center in position:
+                weights = np.maximum(0, 1 - np.abs(coordinates - center) / 1.5)
+                norm_squared *= float(np.sum(weights**2) / np.sum(weights) ** 2)
+            rates[id] = 0.1 * math.sqrt(norm_squared) / (24 / n) ** 1.5 * 0.5 * dt
         for r in exchange:
             xb, xa, vb, va, df, dn = (
                 float(r[k])
@@ -206,6 +251,15 @@ def audit(root, extended=False):
                     "fluid_delta",
                     "neural_delta",
                 )
+            )
+            angle = rates[int(r["neuron"])]
+            require(
+                abs(xa - (math.cos(angle) * xb + math.sin(angle) * vb)) <= 1e-12 * math.sqrt(scale),
+                "independent rotation pressure",
+            )
+            require(
+                abs(va - (math.cos(angle) * vb - math.sin(angle) * xb)) <= 1e-12 * math.sqrt(scale),
+                "independent rotation neuron",
             )
             require(
                 abs(dn - 0.5 * (va * va - vb * vb)) <= 1e-14 * scale,
@@ -343,7 +397,11 @@ def audit(root, extended=False):
             sum(p.read_bytes() != (repeat / p.name).read_bytes() for p in original.iterdir()),
         )
     verdicts = {
-        q: "FAIL" if any(g["verdict"] == "FAIL" for g in gates if g["question"] == q) else "PASS"
+        q: "INDETERMINATE"
+        if not any(g["question"] == q for g in gates)
+        else "FAIL"
+        if any(g["verdict"] == "FAIL" for g in gates if g["question"] == q)
+        else "PASS"
         for q in ("C1", "C2", "C3", "C7", "EXTENSION")
     }
     result = dict(
@@ -353,7 +411,9 @@ def audit(root, extended=False):
         extended_authorized=all(v == "PASS" for v in verdicts.values()),
         failures=[g for g in gates if g["verdict"] == "FAIL"],
         C4="INDETERMINATE",
-        C4_execution="NOT RUN (pilot has no held-out seeds)",
+        C4_execution="See communication-verification.json"
+        if extended
+        else "NOT RUN (pilot has no held-out seeds)",
         C5="INDETERMINATE",
         C6="INDETERMINATE",
     )

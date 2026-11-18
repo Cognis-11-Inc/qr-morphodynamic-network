@@ -28,6 +28,14 @@ class CouplingTests(unittest.TestCase):
             self.assertAlmostEqual(gradient, analytic, places=8)
         self.assertEqual(neuron_energy(p, u, v), neuron_energy(p, -u, -v))
 
+    def test_numeric_readout_ties_and_class_order(self):
+        from analysis.communication_0010 import classify
+
+        means = np.array([[1.0, 0.0], [-1.0, 0.0]])
+        self.assertEqual(classify(np.array([0.0, 0.0]), means)[0], -1)
+        self.assertEqual(classify(np.array([1.0, 0.0]), means)[0], 0)
+        self.assertEqual(classify(np.array([-1.0, 0.0]), means)[0], 1)
+
     def test_exact_rotation_has_equal_opposite_exchange(self):
         for x, v in ((0.0, 1.0), (1.0, 0.0), (0.3, -0.7), (0.0, 0.0)):
             angle = 0.013
