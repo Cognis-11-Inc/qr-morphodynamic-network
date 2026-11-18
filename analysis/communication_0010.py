@@ -80,6 +80,26 @@ def review(root):
     frozen = json.loads((root / "templates.json").read_text())
     for name, digest in frozen["training_history_sha256"].items():
         require(sha(root.parent / name / "history.csv") == digest, "unchanged calibration bytes")
+    calibration_predictions = []
+    for model in frozen["models"]:
+        for seed in (211, 223):
+            for label, module in enumerate((9, 27)):
+                folder = training_folder(root, seed, module, model["band"], model["distance"])
+                prediction, distances, tie = classify(feature(folder), model["means"])
+                calibration_predictions.append(
+                    dict(
+                        band=model["band"],
+                        distance=model["distance"],
+                        seed=seed,
+                        module=module,
+                        prediction_module=-1 if tie else (9, 27)[prediction],
+                        tie=bool(tie),
+                        correct=prediction == label,
+                        distance9=float(distances[0]),
+                        distance27=float(distances[1]),
+                    )
+                )
+    old.csv_write(root / "calibration_predictions.csv", calibration_predictions)
     numerical = json.loads((root / "evaluate/verification.json").read_text())
     numeric_valid = all(numerical["verdicts"][q] == "PASS" for q in ("C3", "C7"))
     predictions = []
@@ -271,6 +291,7 @@ def review(root):
         schema=1,
         C4=decoders,
         held_out_predictions=len(predictions),
+        calibration_predictions=len(calibration_predictions),
         C5=band_comparisons,
         all_incorrect_and_ties_retained=True,
         templates_sha256=receipt,
