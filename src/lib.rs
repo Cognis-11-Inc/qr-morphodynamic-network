@@ -54,3 +54,7 @@ pub mod coupling_0010;
 pub mod experiment_0011;
 /// QR11 local online sensory traces and isolated-neuron morphology mechanics.
 pub mod listening_0011;
+
+pub mod morphodynamic_0012;
+
+pub mod experiment_0012;
