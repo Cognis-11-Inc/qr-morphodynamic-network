@@ -64,10 +64,6 @@ class MorphodynamicTests(unittest.TestCase):
                 snapshot(p)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class CompositionBoundaryTests(unittest.TestCase):
     def test_shared_interfaces_reject_bad_physical_binding(self):
         from dataclasses import replace
@@ -95,3 +91,7 @@ class CompositionBoundaryTests(unittest.TestCase):
             sl = [slice(None)] * 3
             sl[2 - j] = -1
             self.assertEqual(np.count_nonzero(a[j + 1][tuple(sl)]), 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
