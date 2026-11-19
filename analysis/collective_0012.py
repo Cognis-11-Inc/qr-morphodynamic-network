@@ -99,11 +99,33 @@ def review(root):
     for name in sorted(allrows):
         if name.endswith("_P"):
             c = compare(d / name, d / (name[:-1] + "F"))
+
+            def pattern(folder, dt):
+                return [
+                    (round(int(e["tick"]) * dt / 0.05), e["neuron"], e["a"], e["b"])
+                    for e in rows(folder / "events.csv")
+                    if e["accepted"] == "1"
+                ]
+
+            c["event_pattern_disagree"] = int(
+                pattern(d / name, 0.05) != pattern(d / (name[:-1] + "F"), 0.025)
+            )
             numerical.append(dict(case=name, **c))
     csv_write(root / "collective-numerical.csv", numerical)
-    valid = all(max(v for k, v in row.items() if k != "case") <= 0.1 for row in numerical)
+    pair_valid = {
+        row["case"][:-2]: all(
+            v <= 0.1
+            for k, v in row.items()
+            if k not in ("case", "palette_positions_disagree", "event_pattern_disagree")
+        )
+        and row["palette_positions_disagree"] == 0
+        and row["event_pattern_disagree"] == 0
+        for row in numerical
+    }
+    valid = all(pair_valid.values())
     summaries = []
     for seed in (409, 419):
+        standard_valid = pair_valid[f"s{seed}_FIXED"] and pair_valid[f"s{seed}_ADAPTIVE"]
         changes = []
         for grid in "PF":
             a = allrows[f"s{seed}_ADAPTIVE_{grid}"]
@@ -126,7 +148,7 @@ def review(root):
         }
         diversity = (
             "INDETERMINATE"
-            if not valid or max(c["dose_relative_difference"] for c in changes) > 0.01
+            if not standard_valid or max(c["dose_relative_difference"] for c in changes) > 0.01
             else "PASS"
             if resolved["diversity"] and min(c["diversity"] for c in changes) >= 0.05
             else "FAIL"
@@ -135,9 +157,9 @@ def review(root):
             dict(
                 seed=seed,
                 morphological_modulation="PASS"
-                if valid and any(resolved.values())
+                if standard_valid and any(resolved.values())
                 else "INDETERMINATE"
-                if not valid
+                if not standard_valid
                 else "FAIL",
                 increased_diversity=diversity,
                 changes=changes,
@@ -178,8 +200,9 @@ def review(root):
         )
         for g in "PF"
     )
+    coupling_valid = all(pair_valid["s409_" + label] for label in ("FIXED", "SOLO0", "OFF"))
     reciprocal = (
-        valid
+        coupling_valid
         and detected >= 2
         and norm > 1e-8
         and norm >= 5 * unc
@@ -197,6 +220,7 @@ def review(root):
         dn = float(np.linalg.norm(f))
         err = float(np.linalg.norm(p - f))
         rel = relative_delta(f, values[f"s409_{right}_F"][0])
+        regime_valid = pair_valid[f"s409_{left}"] and pair_valid[f"s409_{right}"]
         regimes.append(
             dict(
                 comparison=kind,
@@ -204,17 +228,21 @@ def review(root):
                 grid_error=err,
                 relative_effect=rel,
                 verdict="PASS"
-                if valid
+                if regime_valid
                 and dn > 1e-8
                 and dn >= 5 * err
                 and (rel > 0.1 or kind.startswith("perturb"))
                 else "INDETERMINATE"
-                if not valid or dn < 5 * err
+                if not regime_valid or dn < 5 * err
                 else "FAIL",
             )
         )
     r = dict(
-        M3_reciprocal_collective="PASS" if reciprocal else "INDETERMINATE" if not valid else "FAIL",
+        M3_reciprocal_collective="PASS"
+        if reciprocal
+        else "INDETERMINATE"
+        if not coupling_valid
+        else "FAIL",
         M3_morphological_modulation="PASS"
         if all(s["morphological_modulation"] == "PASS" for s in summaries)
         else "INDETERMINATE"
