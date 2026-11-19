@@ -19,6 +19,9 @@ class MorphodynamicTests(unittest.TestCase):
             (stage, row) for stage in "abcde" for row in plan(Path("results/fixture12"), stage)
         ]
         self.assertEqual(len(all_cases), 80)
+        controls = [r for stage, r in all_cases if stage == "d" and "NONADAPTIVE" in r["case"]]
+        self.assertEqual(len(controls), 2)
+        self.assertTrue(all(r["policy"] == "NONADAPTIVE" for r in controls))
         self.assertEqual(len({(s, r["case"]) for s, r in all_cases}), 80)
         private = [r for s, r in all_cases if s == "d" and 10 <= r["geometry"] <= 13]
         self.assertEqual(len(private), 10)

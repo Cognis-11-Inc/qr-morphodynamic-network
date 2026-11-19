@@ -242,7 +242,17 @@ def review(root):
                 else "FAIL",
             )
         )
+    deviations = [
+        dict(
+            case=name,
+            actual_policy=rows(d / name / "metadata.csv")[0]["policy"],
+            intended_policy="NONADAPTIVE",
+        )
+        for name in allrows
+        if "NONADAPTIVE" in name and rows(d / name / "metadata.csv")[0]["policy"] != "NONADAPTIVE"
+    ]
     r = dict(
+        protocol_deviations=deviations,
         M3_reciprocal_collective="PASS"
         if reciprocal
         else "INDETERMINATE"

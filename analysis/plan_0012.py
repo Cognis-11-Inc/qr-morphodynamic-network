@@ -131,10 +131,10 @@ def plan(root, stage):
                             f"s{seed}_{label}_{grid}",
                             grid,
                             seed=seed,
-                            policy="ADAPTIVE"
-                            if "ADAPTIVE" in label
-                            else "NONADAPTIVE"
+                            policy="NONADAPTIVE"
                             if label == "NONADAPTIVE"
+                            else "ADAPTIVE"
+                            if "ADAPTIVE" in label
                             else "FIXED",
                             forcing="COMMON"
                             if label == "COMMON"
