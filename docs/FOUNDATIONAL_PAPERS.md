@@ -1,6 +1,6 @@
-# QR Neural Memory System — Foundational Research
+# QR Morphodynamic Network — Foundational Research
 
-Curated 2026-11-12. Research reading list, not a demonstration that QR Neural Memory works. Links lead to primary publications, authors' copies, or archival records. PDFs are not republished here.
+Curated 2026-11-12. Research reading list, not a demonstration that the QR Morphodynamic Network works. Links lead to primary publications, authors' copies, or archival records. PDFs are not republished here.
 
 ## Foundational associative and distributed memory
 

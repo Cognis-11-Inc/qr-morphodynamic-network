@@ -1,4 +1,6 @@
-# QR Neural Memory System
+# QR Morphodynamic Network
+
+Formerly **QR Neural Memory System**.
 
 An experimental, Rust-first investigation of a mutable, QR-inspired computational matrix.
 
@@ -17,7 +19,7 @@ Follow the [experiment progression index](docs/EXPERIMENTS.md) for separate desi
 
 Experiment 0001 implements five module values (empty, red, green, blue, yellow). Their spatial arrangement is the neuron's shape. Color and shape affect computation. Ripple amplitudes and momentum are transient and separate from persistent module configuration. Compatibility with standard QR codes is not an initial objective.
 
-## QR Neural Memory Principle 001
+## Principle 001
 
 A learned association is represented by persistent, experience-dependent changes distributed across the internal states of many QR neurons. No individual QR neuron is assigned ownership of the complete association. Retrieval must arise from interactions among these local states under explicitly defined deterministic rules.
 

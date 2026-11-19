@@ -1,4 +1,4 @@
-# QR scientific observatory — operator guide
+# QR Morphodynamic Network — scientific observatory operator guide
 
 The Bevy viewer observes the CPU engine or saved data. It is not a second physics
 implementation. Default graphics preference is **low power**, verified on this

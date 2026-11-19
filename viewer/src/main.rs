@@ -1665,13 +1665,13 @@ fn main() -> io::Result<()> {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: if experiment6 {
-                            "QR Neural Network | Experiment 0006 Morphology Observatory"
+                            "QR Morphodynamic Network | Experiment 0006 Morphology Observatory"
                         } else if experiment5 {
-                            "QR Neural Network | Experiment 0005 Checkpoint Replay"
+                            "QR Morphodynamic Network | Experiment 0005 Checkpoint Replay"
                         } else if experiment4 {
-                            "QR Neural Network | Experiment 0004 Frozen Medium"
+                            "QR Morphodynamic Network | Experiment 0004 Frozen Medium"
                         } else {
-                            "QR Neural Network | Experiment 0003 Observatory"
+                            "QR Morphodynamic Network | Experiment 0003 Observatory"
                         }
                         .into(),
                         resolution: (1380, 940).into(),

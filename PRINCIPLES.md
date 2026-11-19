@@ -1,4 +1,4 @@
-# QR Neural Memory Principles
+# QR Morphodynamic Network — Principles
 
 ## Principle 001
 

@@ -3,7 +3,7 @@ name = "qr-neural-memory-system"
 version = "0.1.0"
 edition = "2024"
 publish = false
-description = "Experimental QR-inspired memory substrate"
+description = "QR Morphodynamic Network: an experimental QR-inspired computational substrate"
 
 [lints.rust]
 unsafe_code = "forbid"

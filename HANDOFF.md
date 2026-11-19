@@ -1,6 +1,6 @@
-# QR Neural Memory System — handoff
+# QR Morphodynamic Network — handoff
 
-Updated: 2026-11-18 (America/Toronto).
+Updated: 2026-11-19 (America/Toronto).
 
 Current delivery: Experiment0010; see the final section for current evidence.
 
@@ -1026,3 +1026,21 @@ failed history discrimination. Maximum retention full field/state/trace refineme
 4.57500374%; numeric per-pair values in retention_numerical.csv. Additional
 observer verification exports those values and includes physical validity in each
 causal verdict; original and supplemental model-table bytes are identical.
+
+## Project rename — 2026-11-19
+
+The user renamed the project to **QR Morphodynamic Network**. Current documentation,
+package descriptions, Rust crate documentation and all four viewer window titles
+use that name. Rust/Python package identifiers, local directory, repository URL,
+experiment registrations/results, raw evidence and existing archives retain their
+original identifiers for compatibility and provenance. Principle wording and all
+scientific behavior are unchanged.
+
+Branding-only edits include files covered by historical protected manifests; those
+manifests remain frozen against their original source snapshots, including the
+Experiment0011 delivery ecfd892. Do not rewrite historical hashes or reinterpret
+these title/description changes as changed experimental methods or results.
+
+Rename validation: root/viewer formatting, Python lint, TOML parsing and diff
+whitespace checks pass. Principle/hypothesis bodies match the previous commit.
+Changes are local; no commit or push was performed for this rename.

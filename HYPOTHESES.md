@@ -1,4 +1,4 @@
-# QR Neural Memory Hypotheses
+# QR Morphodynamic Network — Hypotheses
 
 ## R1: Distributed resilience
 

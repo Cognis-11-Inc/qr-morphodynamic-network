@@ -1,7 +1,7 @@
 [project]
 name = "qr-neural-memory-analysis"
 version = "0.1.0"
-description = "Analysis tools for QR Neural Memory experiments"
+description = "Analysis tools for QR Morphodynamic Network experiments"
 requires-python = ">=3.12"
 
 [tool.ruff]
