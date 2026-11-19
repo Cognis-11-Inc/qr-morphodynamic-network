@@ -2,6 +2,7 @@
 
 import argparse
 import json
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -86,6 +87,21 @@ def measure(states, energies, velocity):
     )
 
 
+def comparison(pair):
+    primary, fine = pair
+    values = compare(primary, fine)
+
+    def pattern(folder, dt):
+        return [
+            (round(int(e["tick"]) * dt / 0.05), e["neuron"], e["a"], e["b"])
+            for e in rows(folder / "events.csv")
+            if e["accepted"] == "1"
+        ]
+
+    values["event_pattern_disagree"] = int(pattern(primary, 0.05) != pattern(fine, 0.025))
+    return dict(case=primary.name, **values)
+
+
 def review(root):
     root = Path(root)
     d = root / "d"
@@ -96,21 +112,10 @@ def review(root):
         x, states, e, velocity = features(d / r["case"])
         allrows[r["case"]] = x
         values[r["case"]] = (states, e, velocity)
-    for name in sorted(allrows):
-        if name.endswith("_P"):
-            c = compare(d / name, d / (name[:-1] + "F"))
-
-            def pattern(folder, dt):
-                return [
-                    (round(int(e["tick"]) * dt / 0.05), e["neuron"], e["a"], e["b"])
-                    for e in rows(folder / "events.csv")
-                    if e["accepted"] == "1"
-                ]
-
-            c["event_pattern_disagree"] = int(
-                pattern(d / name, 0.05) != pattern(d / (name[:-1] + "F"), 0.025)
-            )
-            numerical.append(dict(case=name, **c))
+    pairs = [(d / name, d / (name[:-1] + "F")) for name in sorted(allrows) if name.endswith("_P")]
+    # Independent saved-case analysis only, never parallel physical updates.
+    with ProcessPoolExecutor(max_workers=4) as pool:
+        numerical = list(pool.map(comparison, pairs))
     csv_write(root / "collective-numerical.csv", numerical)
     pair_valid = {
         row["case"][:-2]: all(
