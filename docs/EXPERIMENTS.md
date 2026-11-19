@@ -91,3 +91,23 @@ The retained held-out discrimination result remains a separate report verdict.
 Retained held-out usefulness **FAILS** at both distances: adapted4m all ties,
 adapted6m4/8 each grid; at least one paired history has zero feature separation.
 Persistent causal response modification is supported; useful memory is not.
+
+## Experiment 0012 — four-neuron shared-fluid morphodynamics
+
+[Registration](../EXPERIMENT_0012.md), [schema](EXPERIMENT_0012_SCHEMA.md),
+[results](EXPERIMENT_0012_RESULTS.md), [composition](EXPERIMENT_0012_COMPOSITION.md)
+and [exploitation](EXPERIMENT_0012_EXPLOITATION.md). Original80 trajectories executed,
+including2protocol-invalid conditions described below.
+Three legal in-run events per node in the pilot agree across P/T/F, with full
+energy/work and exact-fork evidence. M2 remote threshold FAILS: numerically resolved
+remote differences are below0.1% of baseline. Independent open-operator prediction
+passes agreement; categorical engineering advantage FAILS. Collective verdicts
+remain separate. Initial verifier defects and original receipts are preserved in
+[execution clarifications](EXPERIMENT_0012_EXECUTION_CLARIFICATIONS.md). Historical
+memory failures remain unchanged; memory/learning are not0012 success criteria.
+M3 fixed reciprocal interaction PASS; adaptive modulation/diversity INDETERMINATE
+(seed409 refinement/event failure, seed419 valid negative). Original80 includes
+2protocol-invalid adaptive duplicates mislabeled nonadaptive;78intended conditions
+validly executed. A separately preregistered2-run diagnostic completes the missing
+control without replacing originals or revising gates. Total82actual trajectories;
+all defects, diagnostics, numerical failures and exact negative thresholds retained.

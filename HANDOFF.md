@@ -2,7 +2,8 @@
 
 Updated: 2026-11-19 (America/Toronto).
 
-Current delivery: Experiment0010; see the final section for current evidence.
+Current delivery: Experiment0012; see its final sections for current evidence,
+protocol deviations, separate diagnostics and delivery receipts.
 
 ## Rehydrate
 
@@ -1044,3 +1045,107 @@ these title/description changes as changed experimental methods or results.
 Rename validation: root/viewer formatting, Python lint, TOML parsing and diff
 whitespace checks pass. Principle/hypothesis bodies match the previous commit.
 Changes are local; no commit or push was performed for this rename.
+
+## Experiment 0012 — four genuine morphodynamic bodies (2026-11-19)
+
+User directive implemented in new versioned modules, preserving old physics and
+results. Branding committed52e4dba; registration94285ca and206-file protected
+manifest precede engine d548de4 and all QR12 outcomes. Verified origin remains
+https://github.com/Cognis-11-Inc/qr-neural-memory-system. Current project name is
+QR Morphodynamic Network; package/directory IDs remain stable. Principle002 is
+proposed; no memory/recognition/learning/intelligence success criterion.
+
+Read EXPERIMENT_0012.md, docs/EXPERIMENT_0012_SCHEMA.md, results, composition proof,
+execution clarifications and exploitation assessment. SQ centers10/14 in x/y,z12,
+ALT centers9/15, nonoverlapping radius1.5 tensor hats. Four independent64-module
+QR neurons share ONE unchanged QR10 Fluid. QR11 intrinsic/sensing/trace arithmetic
+is copied into new module; old sources unchanged. Every neuron owns the same
+local activity-gated hysteretic law: opportunities16/24/32,refractory8,max3swaps,
+no minimum. Explicit switching work, no transient reset. Only private-fluid and
+scalar baseline controls use the declared alternate configurations.
+
+A13+B12+C12+D38+E5=80 actual trajectories,0 NOT RUN. Case wall1046.845945s,
+raw case bytes10338699980,597 saved full-field checkpoints (including preserved
+fork/ancestry copies),80 every-tick owned-state/controller streams. Resource
+forecasts precede expansions. C measured peak RSS94092KiB; D65296KiB. No GPU,
+4096-population, mobility or native-viewer/FPS claim. Python resource wrapper
+replaced absent /usr/bin/time before any C/D physics started.
+
+A physical prerequisite PASS. B M1activity/validity/consequence PASS: all4nodes
+have3legal events, exact refined palettes/events across P/T/F, quiet/trace-off
+zero changes and remote OFF zero changes. ADAPTIVE-veto norm3.90417191 vs grid
+error.01638675. Counts alone do not imply useful stored experience or asynchronous
+change; opportunity times are shared. Local controller reads only own state.
+
+C uses exact B pre-event16 complete checkpoints including fluid,u/v,P,405traces,
+previous pressure,clocks,controller history,port accounts and compensation terms.
+Permit/veto/sham/external/isolated pairs continue identically without reset and
+veto all later morphology. Boundary audits prove unrelated state unchanged.
+M2activity->morphology and local response PASS. **M2_remote FAIL**: F relative
+permit-veto effects N1/N2/N3=.0002415075/.0002620039/.0000763873, all below.001.
+Absolute signals resolve numerical uncertainty (~19..26x), but detectability is
+not the registered potency criterion. Isolated remote u/v exactly equal P/F.
+Energy-sham contrast passes; equal total energy does not match modal distribution,
+so coefficient-only attribution remains limited.
+
+Two original verifier/observer defects remain inspectable. Oracle original-QR11
+source-only port net was mislabeled as all-port; corrected reader semantics still
+check every port and full balance. An already formed causal delta was mistakenly
+passed to relative(a,b), subtracting the baseline twice; corrected norm(delta)/
+norm(baseline) gives remote FAIL, guarded by a new invariant test. Original outputs
+and first incorrect/failed receipts stay in post-outcome-*; no raw bytes/physical
+trajectories/thresholds/seeds were changed. Never discard these limitations.
+
+M4 predictions from equations/interfaces were frozen before direct seed427 E
+outcomes; independent P/T/F four-body and connected-pair prediction agrees around
+1e-15 relative. Full shared fluid is bound once with ordered ports, not products
+of private-fluid trajectories. Partial-map mathematical validity PASS; independent
+physical/predictive agreement PASS; categorical engineering advantage FAIL because
+ordinary physical validation catches the same6faults. No arbitrary cospan/functor,
+novelty, solver superiority or commercial exclusivity claim. Formal microbenchmarks
+are not physics speed benchmarks. No tracked LICENSE/COPYING file was identified;
+reuse terms and any concrete IP question need separate assessment.
+
+Use docs/EXPERIMENT_0012_RESULTS.md for final collective verdicts and all effect,
+work/dose,undefined phase-pair and numerical data. Late observables use16..40 at
+common.05 cadence, full underlying physical ticks retained. D uses fixed/adaptive,
+OFF,common/private-fluid,nonadaptive,scalar,sustained,geometry and perturbation
+controls. Each comparison has its own numerical validity; no global success score.
+Original executed binary results/experiment_0012/registered-runner is d548de4;
+source-freezes and provenance distinguish it from final reporting HEAD.
+
+Strict local checks:50Rust tests,50Python tests,3viewer tests; fmt/Clippy/release/
+docs/doctests, Ruff/compile/warnings and all206 protected baseline hashes passed.
+Large evidence outside Git. Review+Full_Evidence preserve project-relative paths;
+fresh audit: OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.validate_0012
+results/experiment_0012 --jobs 4 (one shell line). Stage/audit/coverage/prediction
+receipts, archive CRC/member/raw/source SHA, fresh extraction/rebuild, remote SHA
+and hosted CI are separate. Missing delivery receipts mean pending actions.
+Next scientific expansion requires a new registration, not retuning0012 failures.
+
+Final M3: reciprocal fixed-network interaction PASS (shared vs independent single-
+source full-history effect.1235%P/.1266%F, above.1%). Adaptive modulation/diversity
+INDETERMINATE: seed409 has different event patterns and full u/v/trace refinement
+19.69%/22.27%/22.01% (>10%); seed419 is valid but negative. Geometry regime FAIL;
+sustained and fixed-perturbation contrasts PASS; adaptive perturbation INDETERMINATE.
+Never rescue bad full-state refinement with similar aggregate bars or boundedness.
+
+A condition-selector bug made original NONADAPTIVE_P/F actual ADAPTIVE duplicates
+(their raw metadata says so). Original80 actual runs therefore cover78 intended
+conditions plus2PROTOCOL_INVALID controls. Their data/initial reports remain.
+A separately preregistered post-outcome diagnostic ce29a4f defines2correct executions
+of the originally intended nonadaptive law, using unchanged d548de4 engine and
+same409/P,F parameters. Both are physically valid, refinement passes (u~.156%,
+v~.173%,traces1.44%,fluid.817%), and do not revise original gates. They are not
+replacement confirmatory observations. Total actual executions82; total physical
+case wall1082.952121s,raw case bytes10678635624,615saved full-field states including
+ancestry copies,82every-tick streams. Original80 vs diagnostic2 remain separate.
+Source unit test now requires exact NONADAPTIVE policy selection; no favorable
+seed/threshold/input/event-law tuning occurred. Three defects are explicitly
+preserved: oracle aggregate label, double-subtraction effect metric, control selector.
+
+Exploitation assessment favors bounded publication preparation/internal research
+reuse; no general product, categorical premium, intelligent agent or exclusive IP
+is established. All8recorded-data scientific figures inspected. Final receipts
+for source freeze, checks, archive fresh rebuild/replay, remote SHA and hosted CI
+remain outside Git and must be checked separately before declaring delivery done.

@@ -462,3 +462,44 @@ all16 predictions (both grids), adapted6m is4/8 on each grid. The tested mechani
 produces persistent causal response modification, without demonstrating useful
 retained source-history discrimination. All298 trajectories were executed within
 51.8min physical case wall and13.71GB raw; no population-scale result is implied.
+
+## Experiment 0012: four-neuron morphodynamic network
+
+[Registration](EXPERIMENT_0012.md), [binary schema](docs/EXPERIMENT_0012_SCHEMA.md),
+[formal composition notes](docs/EXPERIMENT_0012_COMPOSITION.md),
+[measured results](docs/EXPERIMENT_0012_RESULTS.md) and
+[exploitation assessment](docs/EXPERIMENT_0012_EXPLOITATION.md) separate ongoing
+local morphology, causal reciprocity, collective controls and compositional utility.
+Four genuine QR neurons share one conservative fluid state. Local opportunities
+at16,24,32 allow at most3 lawful one-edge swaps per neuron, with complete work
+accounting and no whole-system reset. This is a bounded candidate, not perpetual
+plasticity, learned memory or an intelligent agent.
+
+```sh
+cargo build --locked --release --bin experiment_0012
+.venv/bin/python -m analysis.plan_0012 a results/my-0012
+target/release/experiment_0012 matrix results/my-0012/a
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.gates_0012 a results/my-0012
+# Full portable delivery, both archives extracted into one empty directory:
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.validate_0012 results/experiment_0012 --jobs 4
+.venv/bin/python -m analysis.report_0012 results/experiment_0012
+.venv/bin/python -m analysis.package_0012 results/experiment_0012 --downloads /home/cognis/Downloads
+```
+
+The original80 trajectories executed within the registered resource limits; two
+were protocol-invalid as their intended controls (details below). Ongoing
+morphology/refined events pass; registered remote causal effect size **FAILS**
+despite resolved small signals. The independent open-operator prediction agrees
+with direct numerical simulation; categorical engineering advantage **FAILS**
+against the ordinary validator. Collective outcomes and uncertainty remain separate
+verdicts in the report. [Execution clarifications](docs/EXPERIMENT_0012_EXECUTION_CLARIFICATIONS.md)
+preserve initial verifier/aggregate-label defects and corrections, including the
+negative remote result. No threshold, seed, input or physical trajectory was retuned.
+
+Final collective result: fixed reciprocal interaction PASS; adaptive modulation
+and increased diversity INDETERMINATE because seed409 fails full-state/event
+refinement, while seed419 is valid but negative. Original NONADAPTIVE labels were
+adaptive duplicates: **78 valid intended conditions +2 protocol-invalid original
+runs**, preserved. Two separately preregistered post-outcome control diagnostics
+bring total actual trajectories to82 without replacing original observations or
+revising gates. Read the report's explicit protocol deviations before reuse.

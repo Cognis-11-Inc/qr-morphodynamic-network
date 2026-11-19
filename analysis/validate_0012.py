@@ -15,6 +15,7 @@ from analysis.composition_0012 import mathematical_tests, predict_case, review
 from analysis.experiment_0005 import require
 from analysis.experiment_0009 import relative
 from analysis.gates_0012 import a, b
+from analysis.perturbations_0012 import review as perturbations
 from analysis.report_0012 import coverage
 
 
@@ -34,6 +35,7 @@ def validate(root, jobs=4):
         results["C"] = causal(root)
     if (root / "d/ledger.csv").exists():
         results["D"] = collective(root)
+        results["perturbation_details"] = perturbations(root)
     results["formal"] = mathematical_tests(root)
     if (root / "e/ledger.csv").exists():
         frozen = json.loads((root / "predictions/freeze.json").read_text())

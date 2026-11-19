@@ -402,6 +402,14 @@ def document(root):
             "",
         ]
     text += [
+        "Adaptive seed409 violates the10% whole-history refinement screen (u19.69%,v22.27%,traces22.01%) and has different event/palette patterns. Similar aggregate bars or bounded energy do not repair this failure. Seed419 is numerically valid but does not show the required resolved modulation/diversity increase. Overall adaptive modulation/diversity remain INDETERMINATE, with the separate valid negative result retained.",
+        "",
+        "The original NONADAPTIVE labels are invalid as controls. The separately preregistered corrected diagnostics use the intended lexicographic rule, preserve the original failed/mislabeled observations, and are reported descriptively without changing original gates. Their actual numerical/control data are in diagnostic-nonadaptive-verification.json.",
+        "",
+        "M3 fixed shared-vs-private single-source history effects are0.1235% on P and0.1266% on F. This40-unit interaction-presence test differs from M2's8-unit single-morphology intervention; passing it does not rescue M2's weak remote effect.",
+        "",
+        "Per-node registered perturbation reach/onset and late-to-early RMS ratios are retained in perturbation-effects.csv. These are descriptive responses, not proof of return to an arbitrary equilibrium deadline; adaptive perturbation remains numerically indeterminate.",
+        "",
         "## M4: composition without a new physical law",
         "",
         "[Definitions and proof](EXPERIMENT_0012_COMPOSITION.md) specify typed complete-state partial maps and open node-pair interfaces. Identities/associative words are exact structural laws; they alone are potentially trivial. Shared fluid ownership and port order are explicit. No tensor product of closed private-fluid neurons is asserted.",
