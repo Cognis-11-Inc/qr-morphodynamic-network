@@ -144,6 +144,16 @@ def pilot(root):
         plan.append(operation(root, dest, "FROZEN_" + grid, root / "pilot" / ("S9_" + grid), False))
     plan.append(operation(root, dest, "REPEAT_P", root / "pilot/REPEAT_P"))
     old.csv_write(dest / "plan.csv", plan)
+    return review_pilot(root)
+
+
+def review_pilot(root):
+    """Reconstruct the frozen L4 gates from actual states, without new commitments."""
+    root = Path(root)
+    dest = root / "morph_pilot"
+    plan = old.rows(dest / "plan.csv")
+    for row in plan:
+        row["enabled"] = row["enabled"].lower() == "true"
     results = {r["case"]: verify_operation(dest / r["case"], r["enabled"]) for r in plan}
     gate = []
 

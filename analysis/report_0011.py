@@ -477,6 +477,37 @@ def document(root):
                 "palette"
             ]
             text.append(f"| {label} | {np.count_nonzero(other != p)} |")
+        if (root / "morph_main/verification.json").exists():
+            text += [
+                "\n| Held seed | Distance | History module | Node | P/F palette differences | Edited-position Jaccard |",
+                "|---|---|---|---|---|---|",
+            ]
+            for seed in HELD:
+                for distance in (4, 6):
+                    for module in (9, 27):
+                        operations = [
+                            root / "morph_main" / f"s{seed}_d{distance}_m{module}_{grid}"
+                            for grid in ("P", "F")
+                        ]
+                        palettes = [
+                            io.neurons(path / "after.n11")["nodes"]["palette"]
+                            for path in operations
+                        ]
+                        originals = [
+                            io.neurons(path / "before.n11")["nodes"]["palette"]
+                            for path in operations
+                        ]
+                        for node in (0, 1):
+                            edits = [
+                                set(np.flatnonzero(a[node] != b[node]))
+                                for a, b in zip(palettes, originals, strict=True)
+                            ]
+                            union = edits[0] | edits[1]
+                            jaccard = len(edits[0] & edits[1]) / len(union) if union else 1.0
+                            different = np.count_nonzero(palettes[0][node] != palettes[1][node])
+                            text.append(
+                                f"| {seed} | {distance}m | {module} | {node} | {different} | {jaccard:.9g} |"
+                            )
     else:
         for ax in axes:
             ax.axis("off")
