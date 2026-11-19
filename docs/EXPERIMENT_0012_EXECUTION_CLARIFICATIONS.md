@@ -25,3 +25,18 @@ and is separately reported. This semantic correction does not repair or replace
 a failed physical convergence test. The first audit's sole failed category was
 this oracle aggregate interpretation; all registered refinement/reference/control
 comparisons and all11 genuine new-engine A case audits already passed.
+
+## Post-outcome relative-effect verifier correction
+
+The first C verifier passed an already formed delta into relative(a,b), whose
+meaning is norm(a-b)/norm(b). That subtracts the baseline twice. Initial incorrect
+C receipts are preserved in post-outcome-relative-effect/. The correct registered
+quantity is norm(delta)/norm(baseline). A targeted invariant test now rejects this
+specific double-subtraction error. The same correction was applied to D regime
+reporting before D outcomes were analyzed. No physical data or threshold changes.
+
+Correct permit-veto remote relative effects on F are approximately0.0002415,
+0.0002620,0.0000764 (0.024%,0.026%,0.008%). Though their absolute deltas exceed1e-8
+and are numerically resolved, all fall below the preregistered0.001(0.1%) remote
+threshold. M2_remote therefore FAILS; do not promote detectability to potency.
+Local response and the separate energy-sham contrast retain their own criteria.

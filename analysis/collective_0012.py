@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from analysis import io_0012 as io
+from analysis.causal_0012 import relative_delta
 from analysis.experiment_0009 import csv_write, relative, rows
 from analysis.gates_0012 import compare
 
@@ -195,7 +196,7 @@ def review(root):
         f = values[f"s409_{left}_F"][0] - values[f"s409_{right}_F"][0]
         dn = float(np.linalg.norm(f))
         err = float(np.linalg.norm(p - f))
-        rel = relative(f, values[f"s409_{right}_F"][0])
+        rel = relative_delta(f, values[f"s409_{right}_F"][0])
         regimes.append(
             dict(
                 comparison=kind,

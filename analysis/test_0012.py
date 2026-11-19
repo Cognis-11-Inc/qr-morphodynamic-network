@@ -93,5 +93,15 @@ class CompositionBoundaryTests(unittest.TestCase):
             self.assertEqual(np.count_nonzero(a[j + 1][tuple(sl)]), 0)
 
 
+class CausalMagnitudeTests(unittest.TestCase):
+    def test_small_delta_is_not_subtracted_from_baseline_twice(self):
+        from analysis.causal_0012 import relative_delta
+
+        baseline = np.array([1.0, 0.0])
+        delta = np.array([1e-4, 0.0])
+        self.assertAlmostEqual(relative_delta(delta, baseline), 1e-4)
+        self.assertLess(relative_delta(delta, baseline), 0.001)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -9,8 +9,13 @@ import numpy as np
 from analysis import io_0012 as io
 from analysis.audit_0012 import node_energy, proposal, stage
 from analysis.experiment_0005 import require
-from analysis.experiment_0009 import csv_write, relative, rows
+from analysis.experiment_0009 import csv_write, rows
 from analysis.gates_0012 import uv
+
+
+def relative_delta(delta, reference):
+    """Magnitude of an already formed difference divided by reference magnitude."""
+    return float(np.linalg.norm(delta) / max(float(np.linalg.norm(reference)), 1e-30))
 
 
 def boundary(folder):
@@ -94,8 +99,8 @@ def review(root):
         for node in range(4):
             norm = float(np.linalg.norm(f[:, node]))
             error = float(np.linalg.norm(p[:, node] - f[:, node]))
-            relp = relative(p[:, node], vP[:, node])
-            relf = relative(f[:, node], vF[:, node])
+            relp = relative_delta(p[:, node], vP[:, node])
+            relf = relative_delta(f[:, node], vF[:, node])
             series = np.linalg.norm(f[:, node].reshape(len(f), -1), axis=1)
             indices = np.flatnonzero(series > 1e-4 * max(float(series.max()), 1e-30))
             onset = 16 + 0.05 * int(indices[0]) if len(indices) else None
