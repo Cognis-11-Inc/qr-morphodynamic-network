@@ -258,7 +258,7 @@ def _audit_case(folder, fresh=False):
                 "QR12 exact port exchange work",
             )
             delta[i] += df
-            port_net += df
+            port_net += df if not s["oracle"] or i != 1 else 0.0
             cancel += abs(df + dn)
         if m["policy"] not in ("SENSOR_OFF", "TRACE_OFF"):
             x = phi(trace_node)
