@@ -83,7 +83,7 @@ def node_energy(node, scalar=False):
     return neuron_energy(node["palette"], node["u"], node["v"])
 
 
-def audit_case(folder, fresh=False):
+def _audit_case(folder, fresh=False):
     folder = Path(folder)
     cache = folder / "audit.json"
     raw = {
@@ -453,6 +453,15 @@ def audit_case(folder, fresh=False):
     cache.write_text(json.dumps(result, indent=2) + "\n")
     csv_write(folder / "audit-gates.csv", gates)
     return result
+
+
+def audit_case(folder, fresh=False):
+    import fcntl
+
+    folder = Path(folder)
+    with (folder.parent / ".audit.lock").open("a+") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        return _audit_case(folder, fresh)
 
 
 def stage(root, fresh=False):
