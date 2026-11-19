@@ -71,8 +71,10 @@ def mathematical_tests(root):
     a = ("kick0", "forward_ports")
     b = ("fluid", "intrinsic")
     c = ("reverse_ports", "kick1", "sense", "event")
+    empty = tuple()
     require(
-        (a + b) + c == a + (b + c) and () + a == a and a + () == a, "QR12 exact word category laws"
+        (a + b) + c == a + (b + c) and empty + a == a and a + empty == a,
+        "QR12 exact word category laws",
     )
     valid = (Interface(), Interface(nodes=(2, 3)))
     faults = [
@@ -271,7 +273,7 @@ def review(root):
     )
     results = []
     for record in frozen["predictions"]:
-        actual = checkpoints = root / "e" / record["case"]
+        actual = root / "e" / record["case"]
         for name, digest in record["files"].items():
             p = dest / name
             require(sha(p) == digest, "QR12 predicted bytes unchanged")

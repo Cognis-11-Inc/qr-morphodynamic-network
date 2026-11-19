@@ -66,3 +66,32 @@ class MorphodynamicTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CompositionBoundaryTests(unittest.TestCase):
+    def test_shared_interfaces_reject_bad_physical_binding(self):
+        from dataclasses import replace
+
+        from analysis.composition_0012 import Interface, compile_modules, ordinary_validator
+
+        valid = (Interface(), Interface(nodes=(2, 3)))
+        self.assertEqual(len(compile_modules(valid)), 8)
+        self.assertTrue(ordinary_validator(valid))
+        for bad in (replace(valid[1], n=96), replace(valid[1], nodes=(1, 2))):
+            with self.assertRaises(ValueError):
+                compile_modules((valid[0], bad))
+            self.assertFalse(ordinary_validator((valid[0], bad)))
+
+    def test_vectorized_fluid_map_keeps_exact_zero_and_wall_slots(self):
+        from analysis.composition_0012 import fluid_step
+
+        a = np.zeros((4, 8, 8, 8))
+        fluid_step(a, 0.05)
+        self.assertEqual(np.count_nonzero(a), 0)
+        a[0, 4, 4, 4] = 0.1
+        for _ in range(3):
+            fluid_step(a, 0.05)
+        for j in range(3):
+            sl = [slice(None)] * 3
+            sl[2 - j] = -1
+            self.assertEqual(np.count_nonzero(a[j + 1][tuple(sl)]), 0)
