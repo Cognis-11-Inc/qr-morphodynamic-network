@@ -40,3 +40,19 @@ Correct permit-veto remote relative effects on F are approximately0.0002415,
 and are numerically resolved, all fall below the preregistered0.001(0.1%) remote
 threshold. M2_remote therefore FAILS; do not promote detectability to potency.
 Local response and the separate energy-sham contrast retain their own criteria.
+
+## Post-outcome nonadaptive control selector defect
+
+Original D NONADAPTIVE_P/F metadata records policy ADAPTIVE: the plan generator
+matched the ADAPTIVE substring first. Their actual bytes are valid duplicate
+adaptive trajectories but INVALID as nonadaptive controls. Preserve both in the
+original80 actual-trajectory count, explicitly distinguish78 validly executed
+intended conditions and2invalid conditions. The original gates and outcomes are
+unchanged; none depend on pretending these duplicates were nonadaptive.
+
+[Separate diagnostic registration](EXPERIMENT_0012_NONADAPTIVE_DIAGNOSTIC.md)
+freezes2extra post-outcome executions of the EXACT originally intended control,
+with unchanged engine/seed/input/law. They do not replace original confirmatory
+observations. Report original80 and diagnostic2 separately, total82. A regression
+invariant now requires exact NONADAPTIVE selection. No physical/numerical threshold
+was loosened and the original M2 failure or M3 indeterminacy is not rescued.

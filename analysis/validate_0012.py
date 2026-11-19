@@ -20,7 +20,9 @@ from analysis.report_0012 import coverage
 
 def validate(root, jobs=4):
     root = Path(root)
-    stages = [root / s for s in "abcde" if (root / s / "ledger.csv").exists()]
+    stages = [
+        root / s for s in (*"abcde", "diagnostic_nonadaptive") if (root / s / "ledger.csv").exists()
+    ]
     with ProcessPoolExecutor(max_workers=jobs) as pool:
         tasks = {s.name: pool.submit(stage, s, True) for s in stages}
         results = {key: job.result() for key, job in tasks.items()}

@@ -57,7 +57,7 @@ def compact(root):
 
     dest = root / "compact_review"
     dest.mkdir(exist_ok=True)
-    for stage in "abcde":
+    for stage in (*"abcde", "diagnostic_nonadaptive"):
         if not (root / stage / "ledger.csv").exists():
             continue
         for entry in rows(root / stage / "ledger.csv"):

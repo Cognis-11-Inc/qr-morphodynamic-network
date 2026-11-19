@@ -39,11 +39,18 @@ def coverage(root):
             row = actual.get(name)
             status = row["status"] if row else "NOT RUN"
             seconds = float(row["elapsed_seconds"]) if row else 0.0
+            condition_status = "VALID" if row else "NOT RUN"
+            if (
+                row
+                and expected["policy"] != rows(root / stage / name / "metadata.csv")[0]["policy"]
+            ):
+                condition_status = "PROTOCOL_INVALID"
             out.append(
                 dict(
                     stage=stage,
                     case=name,
                     status=status,
+                    condition_status=condition_status,
                     seconds=seconds,
                     reason=""
                     if row
@@ -55,16 +62,43 @@ def coverage(root):
                 complete += int(status == "COMPLETE")
                 raw += sum(p.stat().st_size for p in (root / stage / name).iterdir() if p.is_file())
     assert len(out) == 80 and wall < 3600 and raw < 16_000_000_000
+    diagnostic_count = 0
+    diagnostic = root / "diagnostic_nonadaptive"
+    if (diagnostic / "ledger.csv").exists():
+        for item in rows(diagnostic / "ledger.csv"):
+            seconds = float(item["elapsed_seconds"])
+            out.append(
+                dict(
+                    stage="diagnostic_nonadaptive",
+                    case=item["case"],
+                    status=item["status"],
+                    condition_status="POST_OUTCOME_DIAGNOSTIC",
+                    seconds=seconds,
+                    reason="Separate preregistered control-completion diagnostic; does not replace original observations.",
+                )
+            )
+            wall += seconds
+            raw += sum(
+                p.stat().st_size for p in (diagnostic / item["case"]).iterdir() if p.is_file()
+            )
+            diagnostic_count += 1
+    assert wall < 3600 and raw < 16_000_000_000
     csv_write(root / "EXECUTION_LEDGER.csv", out)
     r = dict(
+        diagnostic_trajectories=diagnostic_count,
+        total_actual_trajectories=complete + diagnostic_count,
+        original_protocol_invalid=sum(x["condition_status"] == "PROTOCOL_INVALID" for x in out),
+        original_valid_conditions=sum(x["condition_status"] == "VALID" for x in out),
         actual_trajectories=complete,
         not_run=sum(x["status"] == "NOT RUN" for x in out),
         registered_maximum=80,
         physical_case_seconds=wall,
         raw_case_bytes=raw,
-        full_checkpoints=sum(1 for s in "abcde" for p in (root / s).glob("*/*.q12"))
+        full_checkpoints=sum(
+            1 for s in (*"abcde", "diagnostic_nonadaptive") for p in (root / s).glob("*/*.q12")
+        )
         + sum(1 for p in (root / "a").glob("*/*.q11")),
-        every_tick_streams=complete,
+        every_tick_streams=complete + diagnostic_count,
     )
     (root / "EXECUTION_RECEIPT.json").write_text(json.dumps(r, indent=2) + "\n")
     return r
@@ -125,7 +159,7 @@ def document(root):
         "",
         "## Coverage and methodological boundaries",
         "",
-        f"{receipt['actual_trajectories']} actual trajectories; {receipt['not_run']} registered NOT RUN; {receipt['full_checkpoints']} signed full-field checkpoints; every actual physical tick retains all instantiated nodes,405 traces and local controllers. Actual physical-case wall{receipt['physical_case_seconds']:.6f}s and raw case bytes{receipt['raw_case_bytes']} remain within3600s/16GB. Complete80-condition ledger, exact plans, source/compiler/executable provenance and raw integrity manifests remain outside Git.",
+        f"{receipt['actual_trajectories']} original actual trajectories ({receipt['original_valid_conditions']} valid intended conditions, {receipt['original_protocol_invalid']} protocol-invalid controls), plus{receipt['diagnostic_trajectories']} separate diagnostics; {receipt['not_run']} original trajectories never started; {receipt['full_checkpoints']} signed full-field checkpoints; every actual physical tick retains all instantiated nodes,405 traces and local controllers. Actual physical-case wall{receipt['physical_case_seconds']:.6f}s and raw case bytes{receipt['raw_case_bytes']} remain within3600s/16GB. Complete80-condition ledger plus separate diagnostics, exact plans, source/compiler/executable provenance and raw integrity manifests remain outside Git.",
         "",
         "Four genuine8x8 QR neurons share one unchanged QR10 fluid state. They use QR11 intrinsic/cardinal equations, mass1, damping and two reciprocal ports each. Source roles are apparatus designations. Positions form the registered4m square; the ALT6m square and private-fluid/simpler-oscillator controls are separately labeled. Internal controller proposals receive only own palette,u/v,packet,traces and clock/history. No direct graph/message bus or decoder supplies a response.",
         "",
@@ -231,6 +265,12 @@ def document(root):
             "![Energy and externally actuated switch work](figures/experiment_0012_energy.png)",
             "",
         ]
+    text += [
+        "Original D NONADAPTIVE_P/F were actually ADAPTIVE because of a substring-selector defect. They are marked PROTOCOL_INVALID: 78 original intended conditions were validly executed, 2 were not. Two separately preregistered post-outcome diagnostics complete the missing control without replacing the original80 or revising their scientific gates. See [diagnostic registration](EXPERIMENT_0012_NONADAPTIVE_DIAGNOSTIC.md), actual metadata and separate ledgers. Total actual physical executions, including diagnostics: "
+        + str(receipt["total_actual_trajectories"])
+        + ".",
+        "",
+    ]
     text += ["## M2: exact-checkpoint causal branches", ""]
     if c:
         text += [
