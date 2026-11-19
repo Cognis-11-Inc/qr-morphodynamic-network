@@ -2,6 +2,7 @@
 
 import argparse
 import json
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -312,6 +313,22 @@ def review_retained(root):
     predictions = []
     models = []
     causal = []
+    numerical_rows = []
+    physical_pairs = {}
+    # Independent analysis of disjoint saved cases; physical execution remains serial.
+    with ProcessPoolExecutor(max_workers=4) as pool:
+        comparisons = {
+            (seed, d, history, variant): pool.submit(
+                compare,
+                retained_folder(root, "retention_held", seed, d, history, variant, "P"),
+                retained_folder(root, "retention_held", seed, d, history, variant, "F"),
+            )
+            for seed in HELD
+            for d in (4, 6)
+            for history in (9, 27)
+            for variant in ("ADAPTED", "VIRGIN")
+        }
+        comparison_values = {key: task.result() for key, task in comparisons.items()}
     for model in frozen["models"]:
         d, variant = model["distance"], model["variant"]
         correct = {"P": 0, "F": 0}
@@ -369,11 +386,15 @@ def review_retained(root):
                             classify(vectors["P"][i], model["means"])[0]
                             == classify(vectors["F"][i], model["means"])[0]
                         )
-                        numerical = compare(
-                            retained_folder(root, stage, seed, d, history, variant, "P"),
-                            retained_folder(root, stage, seed, d, history, variant, "F"),
+                        numerical = comparison_values[seed, d, history, variant]
+                        pair_valid = receipt["valid"] and all(v <= 0.1 for v in numerical.values())
+                        physical_pairs[seed, d, history, variant] = pair_valid
+                        valid &= pair_valid
+                        numerical_rows.append(
+                            dict(
+                                seed=seed, distance=d, history=history, variant=variant, **numerical
+                            )
                         )
-                        valid &= all(v <= 0.1 for v in numerical.values())
         verdict = (
             "FAIL"
             if not absolute
@@ -434,6 +455,8 @@ def review_retained(root):
                         and delta > 1e-8
                         and delta >= 5 * uncertainty
                         and row["source_work_relative_difference"] <= 0.01
+                        and physical_pairs[seed, distance, history, "ADAPTED"]
+                        and physical_pairs[seed, distance, history, "VIRGIN"]
                         else "INDETERMINATE"
                     )
     improvement = []
@@ -460,6 +483,7 @@ def review_retained(root):
         ("retention_models.csv", models),
         ("retention_causal.csv", causal),
         ("retention_improvement.csv", improvement),
+        ("retention_numerical.csv", numerical_rows),
     ):
         old.csv_write(root / file, data)
     result = dict(

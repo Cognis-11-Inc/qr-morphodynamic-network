@@ -418,3 +418,45 @@ accounting and signed interference validation. **All nine fixed cross-seed
 S9/S27 decoders fail**, despite valid numerical refinement. All159 simulations,
 503 fluid fields,399 neural checkpoints,47 held-out prediction errors and14
 indeterminate band comparisons are retained. No learning or memory result.
+
+## Experiment 0011: local temporal signatures and gated morphology
+
+[Registration](EXPERIMENT_0011.md) precedes the new implementation and observations.
+Every instantiated neuron owns the same local sensor, bounded 405-component trace
+and candidate morphology rule. Source labels and frozen classifiers remain external
+apparatus. The [schema](docs/EXPERIMENT_0011_SCHEMA.md) specifies every-tick owned
+state, signed full fields, switching work and complete reset evidence.
+
+```sh
+cargo build --locked --release --bin experiment_0011
+# A NEW root; later plans require the frozen prerequisite receipts.
+.venv/bin/python -m analysis.plan_0011 l1 results/my-0011
+target/release/experiment_0011 matrix results/my-0011/l1
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.gates_0011 l1 results/my-0011
+# Completed portable delivery: force fresh independent audits and use frozen means.
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.validate_0011 results/experiment_0011
+.venv/bin/python -m analysis.report_0011 results/experiment_0011
+.venv/bin/python -m analysis.package_0011 results/experiment_0011 --downloads /home/cognis/Downloads
+```
+
+Install both `requirements-analysis.txt` and `requirements-plot.txt` for the full
+report/validation workflow. Consult [measured results](docs/EXPERIMENT_0011_RESULTS.md)
+for the separate sensing, trace, equal-work, held-out readout, morphology and
+post-reset verdicts. Inspect `EXECUTION_LEDGER.csv` for all 298 possible physical
+conditions and the separate commitment operations. No overall success score;
+structural change alone establishes neither useful memory nor learned association.
+All QR10 failures and prior numerical limitations remain unchanged.
+
+Measured local sensing, bounded online trace reconstruction, equal-work temporal
+structure, legal receiver morphology and the complete-reset causal pilot pass.
+The primary signed-trace held-out classifiers fail (4/8 at4m,2/8 at6m on both
+grids); instantaneous u/v comparisons pass (7/8,8/8). Consult the report for the
+separate retained-response and usefulness results. Equal source work does not
+mean equal emission or absorption. No necessity-of-repetition or associative
+memory claim follows from these controls.
+
+Retained held-out usefulness also **FAILS** at both distances: adapted4m ties on
+all16 predictions (both grids), adapted6m is4/8 on each grid. The tested mechanism
+produces persistent causal response modification, without demonstrating useful
+retained source-history discrimination. All298 trajectories were executed within
+51.8min physical case wall and13.71GB raw; no population-scale result is implied.

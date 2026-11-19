@@ -946,3 +946,83 @@ audit/report additions. No native window/GPU/FPS claim. Original/source-freeze e
 raw observations, all failures/ambiguities and final packages stay outside Git.
 No learning, scaling, movement, real-material attenuation, or memory claim.
 Principle 002 is a proposed mechanism, not an experimentally established law.
+
+## Experiment 0011 (2026-11-18): local signatures and gated morphology
+
+Registration3ba0680 precedes enginebc599b9 and all new trajectories. Protected
+manifest preserves182 prior scientific/source/configuration files. QR10's nine
+failed held-out decoders, QR7 R3 numerical failure and earlier long-window
+limitations remain unchanged. Principle002 remains a proposed mechanism.
+
+Isolated CPU/serial Rust QR11 uses unchanged acoustic0010 Fluid and copied QR10
+internal/reciprocal physical equations. Two actual nodes (three only in L1 dual
+controls) all own identical sensors,405 bounded online trace components and the
+same legal local morphology law. Observer roles/labels never enter neuron state.
+No4096-population, mobile geometry, GPU or native viewer execution is claimed.
+
+Raw/provenance/frozen means/ledgers remain under ignored results/experiment_0011.
+Original registered-runner is enginebc599b9; final delivery HEAD is not silently
+substituted for the engine that generated data. Source-freeze archives preserve
+registration, engine and pre-held instrument snapshots. TEMPLATES_SHA256 and
+RETENTION_TEMPLATES_SHA256 bind separately frozen models before held plans/runs.
+Supplementary stage provenance explicitly notes when recorded after stage start;
+original root engine/compiler/source provenance was recorded before execution.
+
+L1 all7 categories PASS; L2 local causal history/temporal structure PASS;
+L3 actual net-work matching PASS. Temporary signed trace classifier FAIL at4m
+(4/8 each grid) and6m(2/8 each). INSTANT comparison PASS7/8 and8/8; energy/all-trace
+comparisons INDETERMINATE, QR10-style raw histories FAIL. No replacement of the
+primary readout or retuning. Historical QR10 readout outcomes remain unchanged.
+
+L4 pilot PASS: exposed receiver4 disjoint swaps/8 edited module positions;
+S9/S27/ORDER exact palettes agree P/F, with source refinements also recorded.
+Quiet/OFF/trace-off/frozen receiver edits0. Actual replay is identical. Every
+operation is independently reconstructed from its bounded local pre-state;
+full switch-work/histogram/eligibility/rank receipts retained.
+
+L5 causal pilot PASS: complete fluid/neuron/packet/trace/counter reset followed
+by identical probes. S9/S27 retained receiver response differs from virgin;
+quiet/OFF/trace-off/frozen/restored controls match virgin. Source palette always
+restored. Removed energy is explicitly recorded and independently reconstructed;
+reset is not energy-conserving. Matched source work is not matched local dose.
+Single-pulse/reordering/scrambled controls remain separate comparisons, with no
+claim that repetition is necessary or local magnitude explanations eliminated.
+
+Use docs/EXPERIMENT_0011_RESULTS.md and EXECUTION_LEDGER.csv for final counts,
+retained held-out verdicts and all failures/ambiguities. Portable validation:
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.validate_0011 results/experiment_0011 --jobs 4
+(analysis workers never integrate physical cases).
+The validator performs fresh every-tick physical/trace audits, exact morphology
+and reset-energy reconstruction, registered numerical gates and frozen-model
+review without refitting or inventing new outcomes. Full report needs pinned
+requirements-analysis.txt and requirements-plot.txt. Full archives preserve
+project-relative paths; extract both into one empty directory.
+
+Local strict checks passed:47 Rust tests,44 Python tests,3 viewer tests;
+root/viewer format+Clippy, root release/docs/doc-tests, Ruff+warnings-as-errors
+Python tests/compile, protected baseline hashes. Delivery receipts remain
+separate: local-checks.json, source-integrity.json, delivery.json,
+archive-validation.json and delivery-status.json. Inspect actual receipts for
+fresh extraction/rebuild/reverification, remote SHA and hosted CI; an absent
+receipt never means those actions passed. No learning or associative-memory
+claim follows from structural modification or external decoding alone.
+
+Completed physical coverage:298/298 trajectories,0 NOT RUN,73 distinct commitment
+operations,877 full fluid and877 owned-state checkpoints,298 every-tick streams.
+Physical case wall3108.363193s (<3600), raw case bytes13710751843 (<16GB).
+All eight executed-stage physical/trace audits pass. Full failures/ambiguities
+of measuring instruments remain separate scientific results, never erased.
+
+Final L5 usefulness: FAIL at both distances. ADAPTED d4 has16/16 held ties
+(8 per grid),0 classified correctly; ADAPTED d6 is4/8 correct on each grid,
+with at least one zero-separation paired history. VIRGIN has16/16 ties per
+distance. No valid adapted7/8 pass and no registered improvement. Persistent
+causal response modification is supported by the pilot; useful retained source
+history, associative memory, necessary repetition and learning are not established.
+Next bounded research needs a new registration; do not tune0011's morphology,
+features, thresholds, seeds or frozen means to repair its failed readouts.
+Held-out causal response contrasts32/32 PASS (16 histories on P/F), distinct from
+failed history discrimination. Maximum retention full field/state/trace refinement
+4.57500374%; numeric per-pair values in retention_numerical.csv. Additional
+observer verification exports those values and includes physical validity in each
+causal verdict; original and supplemental model-table bytes are identical.

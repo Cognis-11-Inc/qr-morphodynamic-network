@@ -70,3 +70,24 @@ A/B pass for registered fixtures. Emission/reception, reciprocal accounting,
 controls and signed interference pass; **all9 held-out S9/S27 decoders FAIL**.
 C5 retains22 resolved band comparisons and14 INDETERMINATE. Full failures,
 work/uncertainty budgets and original QR9 FAIL remain inspectable in the report.
+
+## Experiment 0011 — local temporal signatures and gated morphology
+
+Independent [registration](../EXPERIMENT_0011.md), [schema](EXPERIMENT_0011_SCHEMA.md)
+and [measured report](EXPERIMENT_0011_RESULTS.md). Identical local sensors and bounded
+405-component traces in every instantiated neuron precede a registered local
+morphology rule. Separate equal-source-work calibration, polarity/reordering,
+quiet/disconnection/trace-off/scrambled/frozen controls, complete reset and
+adapted-versus-virgin probes distinguish temporary signatures, persistent change,
+causal response and held-out usefulness. Source labels/means remain apparatus.
+All prior failures remain; no overall score or distributed-association claim.
+
+Measured: all298 trajectories and73 distinct commitments executed.877 full fluid
+and877 owned-neuron checkpoints, every actual tick retained. Local sensing,
+causal trace reconstruction, equal-work temporal structure, legal morphology and
+complete-reset causal pilot pass. Primary signed-trace source classifiers FAIL
+(4/8 at4m,2/8 at6m, both grids); instantaneous-state comparisons PASS7/8 and8/8.
+The retained held-out discrimination result remains a separate report verdict.
+Retained held-out usefulness **FAILS** at both distances: adapted4m all ties,
+adapted6m4/8 each grid; at least one paired history has zero feature separation.
+Persistent causal response modification is supported; useful memory is not.

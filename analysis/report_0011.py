@@ -517,21 +517,37 @@ def document(root):
     text.append(
         "![Actual palettes or explicitly unexecuted stage](figures/experiment_0011_morphology.png)\n"
     )
-    fig, ax = plt.subplots(figsize=(10, 4), layout="constrained")
+    fig, response_axes = plt.subplots(1, 2, figsize=(12, 4), layout="constrained")
+    ax = response_axes[0]
     if retention:
+        virgin = io.stream(root / "retention_pilot/VIRGIN_P/observations.q11o")["frames"]["nodes"][
+            :, 1
+        ]
         for label in ("S9", "S27", "VIRGIN", "RESTORED_S9", "SCRAMBLED"):
             s = io.stream(root / "retention_pilot" / (label + "_P") / "observations.q11o")
+            node = s["frames"]["nodes"][:, 1]
+            time = np.arange(s["ticks"] + 1) * s["dt"]
             ax.plot(
-                np.arange(s["ticks"] + 1) * s["dt"],
-                s["frames"]["nodes"][:, 1]["u"][:, 9],
+                time,
+                node["u"][:, 9],
                 label=label,
             )
+            difference = np.sqrt(
+                np.sum((node["u"] - virgin["u"]) ** 2 + (node["v"] - virgin["v"]) ** 2, axis=1)
+            )
+            response_axes[1].plot(time, difference, label=label)
         ax.set(
             xlabel="normalized probe time",
             ylabel="actual receiver module9 signed u",
             title="Same probe after exact transient/trace reset",
         )
         ax.legend(fontsize=8)
+        response_axes[1].set(
+            xlabel="normalized probe time",
+            ylabel="norm of all128 receiver u/v differences",
+            title="Full response difference from virgin",
+        )
+        response_axes[1].legend(fontsize=8)
         text.append(
             f"L5 causal pilot **{retention['L5_causal']}**. Initial full fields/owned snapshots prove zero u/v,fluid,packets,previous pressure,405 traces,age,commit flags and work/loss/port accounts. Source palette is restored; only declared receiver palette persists. VIRGIN is a fresh body. RESTORED_S9 restores receiver palette at zero state. Probe waveform/amplitude identical across retained histories; actual work variation is separately gated1%. See reset.csv and retention_pilot/gates.csv.\n"
         )
@@ -566,6 +582,7 @@ def document(root):
                     f"| {label} | {grid} | {delta / max(float(np.linalg.norm(original)), 1e-30):.9g} | {delta:.9g} | {change:.9g} |"
                 )
     else:
+        response_axes[1].axis("off")
         ax.axis("off")
         ax.text(
             0.5,
@@ -585,15 +602,20 @@ def document(root):
     )
     if final_retention:
         text += [
-            "| Distance | Variant | Primary correct/8 | Fine correct/8 | Ties | Verdict |",
-            "|---|---|---|---|---|---|",
+            "| Distance | Variant | Primary correct/8 | Fine correct/8 | Ties | Max feature grid error | Min separation / grid error | Verdict |",
+            "|---|---|---|---|---|---|---|---|",
         ]
         for r in final_retention["L5_models"]:
             text.append(
-                f"| {r['distance']}m | {r['variant']} | {r['correct_P']} | {r['correct_F']} | {r['ties']} | {r['verdict']} |"
+                f"| {r['distance']}m | {r['variant']} | {r['correct_P']} | {r['correct_F']} | {r['ties']} | {r['max_feature_refinement']:.9g} | {r['min_separation_to_uncertainty']:.9g} | {r['verdict']} |"
             )
         text.append(
             "All retention predictions, uncertainties and adapted/virgin contrasts remain in retention_*.csv. Improvement requires a valid adapted pass and higher held correctness on BOTH grids, not a bigger response.\n"
+        )
+        causal = final_retention["L5_response"]
+        passed = sum(r["verdict"] == "PASS" for r in causal)
+        text.append(
+            f"Held-out causal response contrasts: {passed}/{len(causal)} PASS (16 retained history conditions, each on both grids). These compare adapted with its own same-seed virgin, not S9 history with S27 history. Full numerical comparisons remain in retention_numerical.csv; zero paired history separation and ties are retained in the failed discrimination result.\n"
         )
     text += [
         "## Answers to the eight scientific questions\n",
