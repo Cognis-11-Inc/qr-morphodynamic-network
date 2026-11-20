@@ -1,0 +1,3 @@
+# External QR13 instrument; no simulator/runtime dependency. CPU-capable hosted CI.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.15.0+cpu
