@@ -9,7 +9,8 @@ source directory, stream/audit/dataset SHA256, original archive SHA256, causal
 checkpoint ancestry, seed family, partition, physical/numerical/protocol validity,
 duplicate marker, diagnostic marker and model eligibility. All invalid controls
 remain inventoried. The prior physical audit receipt is bound to every raw-file
-SHA; it is evidence distinct from extraction verification. `splits.json` records
+SHA; it is evidence distinct from extraction verification. `observation-availability.json` supplements all actual full-field/owned-state
+formats and checkpoint times, including legacy.q11/.n11. `splits.json` records
 complete seed-family partitions; descendants/refinements/repeats never move.
 
 `data/STAGE__CASE.npz` stores actual .2-time-unit subsamples: absolute time, raw
@@ -20,7 +21,12 @@ order:fluid,neural,loss,force_work,switch_work,positive,negative,port_net,cancel
 QR11 oracle controller is explicitly unavailable/zero and oracle never modeled.
 Displacement/velocity/energy/pressure use the engine's normalized physical units;
 these are not calibrated biological/QR-material measurements. No interpolation
-of sparse fields into dense truth. Full fields remain in original archives.
+of sparse fields into dense truth. Full fields remain in original archives. Remaining complete controller registers
+(last tick,budget,vetoes,switch-work compensation) and signed individual port
+exchanges are accessed through the mapped raw stream/ledgers via the recorded
+tick; they are not all used as predictive features. The legacy ORACLE port_net
+column retains its documented SOURCE-only meaning, unlike QR12 all-port totals.
+Oracle records are excluded from modeling; the original defect is not relabelled.
 
 Forecast origins use the three observed times t-.4,t-.2,t. Labels are direct
 states t+.2,t+1,t+2; all inputs are at or before t. Target blocks are64 u,64 v,

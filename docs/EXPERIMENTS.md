@@ -111,3 +111,19 @@ M3 fixed reciprocal interaction PASS; adaptive modulation/diversity INDETERMINAT
 validly executed. A separately preregistered2-run diagnostic completes the missing
 control without replacing originals or revising gates. Total82actual trajectories;
 all defects, diagnostics, numerical failures and exact negative thresholds retained.
+
+
+## Experiment0013 — external learner
+
+[Registration](../EXPERIMENT_0013.md) precedes retrospective QR12 dataset extraction,
+external CPU PyTorch model fitting and32 new reserved Rust trajectories. Rust
+physics is unchanged. [Results](EXPERIMENT_0013_RESULTS.md): G1 integrity PASS;
+G2 predictive utility, G3 explicit morphology information and G4 learned latent
+advantage FAIL; G5 discovery and G6 decision efficiency NOT RUN. Seven valid held
+seed families support comparisons; adaptive457 fails discrete refinement and is
+retained as diagnostic. The selected learner's held error is51.3% higher than the
+selected linear model; no threshold/model changed afterwards. The
+[independent proposal](EXPERIMENT_0013_CODEX_INDEPENDENT_PROPOSAL.md) recommends a
+separate observability/closure experiment0014, not an established discovery.
+[Exploitation assessment](EXPERIMENT_0013_EXPLOITATION.md) separates internal tooling
+reuse from unestablished predictive/decision/product advantages.

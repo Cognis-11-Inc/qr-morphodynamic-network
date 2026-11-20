@@ -20,6 +20,7 @@ from analysis.experiment_0005 import require
 from analysis.experiment_0009 import csv_write
 from analysis.latent_0013 import evaluate as latent_evaluate
 from analysis.latent_0013 import gates as latent_gates
+from analysis.observability_0013 import review as observation_diagnostic
 from analysis.plan_0012 import condition
 from analysis.prospective_0013 import verify_freeze
 
@@ -162,6 +163,12 @@ def validate(root, replay_rust=True):
         "QR13 exact verdict/statistical reconstruction",
     )
     analyze(root)
+    old_diagnostic = json.loads((root / "post-outcome-observability.json").read_text())
+    observation_diagnostic(root)
+    require(
+        json.loads((root / "post-outcome-observability.json").read_text()) == old_diagnostic,
+        "QR13 post-outcome observer diagnostic reconstruction",
+    )
     result = dict(
         dataset=dataset["G1"],
         physical=physical,

@@ -516,3 +516,44 @@ adaptive duplicates: **78 valid intended conditions +2 protocol-invalid original
 runs**, preserved. Two separately preregistered post-outcome control diagnostics
 bring total actual trajectories to82 without replacing original observations or
 revising gates. Read the report's explicit protocol deviations before reuse.
+
+
+## Experiment0013: the external scientific learner
+
+[Preregistration](EXPERIMENT_0013.md), [observation schema](docs/EXPERIMENT_0013_SCHEMA.md),
+[measured results](docs/EXPERIMENT_0013_RESULTS.md),
+[research exploitation assessment](docs/EXPERIMENT_0013_EXPLOITATION.md) and
+[Codex independent proposal](docs/EXPERIMENT_0013_CODEX_INDEPENDENT_PROPOSAL.md)
+introduce PyTorch as an **external observer**. Rust physics, local morphology and
+all prior registrations/results remain unchanged. No learned controller feeds
+back into the substrate.
+
+The inventory covers82 historical trajectories plus32 newly reserved Rust runs;
+these are12 seed families, not114 independent samples. Seven new families pass
+both-policy P/F event/numerical checks; adaptive seed457 fails discrete refinement
+and remains diagnostic. G1 integrity PASS; G2 forecast utility, G3 incremental
+palette information and G4 learned latent advantage FAIL. The selected learner's
+held u/v error is51.3% higher than the selected linear baseline. No candidate
+qualified for extra physical discovery tests: G5/G6 NOT RUN. No overall score or
+new physical mechanism/memory/intelligence claim.
+
+The CPU-only dependency is optional for prior physics:
+
+```sh
+uv pip install --python .venv/bin/python -r requirements-learn.txt
+# New development root, actual QR12 data required; never refit sealed final tests:
+.venv/bin/python -m analysis.dataset_0013 results/experiment_0012 results/my-0013
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.learn_0013 baselines results/my-0013
+.venv/bin/python -m analysis.structure_0013 ordinary results/my-0013
+.venv/bin/python -m analysis.structure_0013 physical results/my-0013
+# Complete delivered archives, extracted together; no test training:
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m analysis.validate_0013 results/experiment_0013
+```
+
+The portable validator restores only original raw ancestry paths, independently
+checks dataset alignment/labels, reconstructs all new physical/numerical audits,
+re-evaluates sealed predictions and statistical verdicts, and runs one separately
+labelled rebuilt-Rust reproducibility trajectory. CPU smoke tests are hosted;
+no NVIDIA GPU is required. Inspect ignored archive/push/CI receipts separately.
+The independent proposal recommends a separately registered observability/closure
+experiment before larger learners; it was not executed under0013.

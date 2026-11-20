@@ -2,6 +2,8 @@
 
 import argparse
 import json
+import struct
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -17,8 +19,18 @@ def audit_dataset(root):
     inventory = json.loads((root / "inventory.json").read_text())
     if (root / "prospective-inventory.json").exists():
         inventory += json.loads((root / "prospective-inventory.json").read_text())
+    archive_members = {}
+    for archive in json.loads((root / "extraction.json").read_text())["archives"]:
+        path = Path("ancestry") / archive["file"]
+        if not path.exists():
+            path = Path("results/experiment_0012/packages") / archive["file"]
+        with zipfile.ZipFile(path) as z:
+            for line in z.read(path.stem + "_SHA256SUMS.txt").decode().splitlines():
+                digest, name = line.split("  ", 1)
+                archive_members[name] = digest
     results = []
     families = {}
+    availability = []
     for r in inventory:
         folder = Path(r["source"])
         if not folder.exists():
@@ -26,6 +38,17 @@ def audit_dataset(root):
             parts = folder.parts
             index = parts.index("results")
             folder = Path(*parts[index:])
+        for name, digest in r["raw"].items():
+            source = folder / name
+            require(sha(source) == digest, "QR13 actual raw-file provenance")
+            if r["experiment"] == "0012":
+                require(archive_members[str(source)] == digest, "QR13 raw/archive member binding")
+        if r["experiment"] == "0012":
+            source = folder / "audit.json"
+            require(
+                archive_members[str(source)] == r["source_audit_sha256"] == sha(source),
+                "QR13 audit/archive member binding",
+            )
         metadata = rows(folder / "metadata.csv")[0]
         require(metadata == r["metadata"], "QR13 inventory actual metadata binding")
         require(partition(int(metadata["seed"])) == r["partition"], "QR13 family partition")
@@ -33,6 +56,17 @@ def audit_dataset(root):
         path = root / "data" / (r["id"] + ".npz")
         require(sha(path) == r["data_sha256"], "QR13 immutable compact dataset")
         s = io_0012.stream(folder)
+        require(
+            s["n"] == int(metadata["n"]) and s["dt"] == float(metadata["dt"]),
+            "QR13 header/metadata physical units and grid",
+        )
+        if not s["oracle"]:
+            require(
+                s["seed"] == int(metadata["seed"])
+                and s["geometry"] == int(metadata["geometry"])
+                and s["scalar"] == int(metadata["scalar"]),
+                "QR13 actual header seed/geometry/body model",
+            )
         raw = s["frames"][:: round(0.2 / s["dt"])]
         with np.load(path) as a:
             for field in ("u", "v", "packet", "z", "palette"):
@@ -86,6 +120,33 @@ def audit_dataset(root):
                     require(np.isfinite(features["x"]).all(), "QR13 finite causal inputs")
         if not r["protocol_valid"] or not r["numerical_valid"]:
             require(not r["model_eligible"], "QR13 invalid controls excluded")
+        checkpoints = []
+        for source in sorted(folder.iterdir()):
+            if source.suffix not in (".q12", ".q11", ".n11"):
+                continue
+            with source.open("rb") as f:
+                header = f.read(48)
+            _, dimension, tick, dt = struct.unpack_from("<3Qd", header, 8)
+            checkpoints.append(
+                dict(
+                    path=str(source),
+                    time=tick * dt,
+                    tick=tick,
+                    dimension=dimension,
+                    full_field=source.suffix != ".n11",
+                    pre_event=source.name.startswith("pre-"),
+                )
+            )
+        availability.append(
+            dict(
+                id=r["id"],
+                checkpoints=checkpoints,
+                actual_dt=s["dt"],
+                compact_cadence=0.2,
+                complete_controller_registers_in_raw=not s["oracle"],
+                dense_fluid_fields=False,
+            )
+        )
         results.append(
             dict(id=r["id"], valid=True, observations=r["observations"], partition=r["partition"])
         )
@@ -98,6 +159,7 @@ def audit_dataset(root):
         interpretation="verified origin/alignment; no statistical independence from timestamps",
         inventory_sha256=sha(root / "inventory.json"),
     )
+    save(root / "observation-availability.json", availability)
     save(root / "dataset-verification.json", result)
     return result
 

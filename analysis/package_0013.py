@@ -68,7 +68,7 @@ def write_archive(path, members):
                 source,
                 name,
                 compress_type=zipfile.ZIP_STORED
-                if source.suffix in (".zip", ".gz")
+                if source.suffix in (".zip", ".gz", ".npz")
                 else zipfile.ZIP_DEFLATED,
             )
             manifest.append(f"{sha(source)}  {name}\n")
@@ -144,6 +144,23 @@ def package(root, downloads=None):
         ),
     ]
     save(root / "delivery.json", receipts)
+    inventory = json.loads((root / "inventory.json").read_text())
+    inventory += json.loads((root / "prospective-inventory.json").read_text())
+    lineage = dict(
+        archives=receipts,
+        historical_archives=ancestry,
+        sample_archive_binding=[
+            dict(
+                id=r["id"],
+                archives=ancestry if r["experiment"] == "0012" else receipts,
+                stream_sha256=r["stream_sha256"],
+                data_sha256=r["data_sha256"],
+            )
+            for r in inventory
+        ],
+        scope="External sidecar avoids a self-referential archive hash.",
+    )
+    save(root / "archive-lineage.json", lineage)
     if downloads:
         downloads = Path(downloads)
         downloads.mkdir(exist_ok=True)
@@ -154,6 +171,7 @@ def package(root, downloads=None):
             # Same filesystem: preserve storage ceiling while exposing normal Download files.
             os.link(source, target)
             require(sha(target) == r["sha256"], "QR13 downloadable archive bytes")
+        save(downloads / "QR_Morphodynamic_Network_Experiment_0013_Archive_Lineage.json", lineage)
         for name in (
             "EXPERIMENT_0013_RESULTS.md",
             "EXPERIMENT_0013_EXPLOITATION.md",

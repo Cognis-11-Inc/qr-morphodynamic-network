@@ -11,7 +11,10 @@ with the linear acoustic map. Registered switches change coefficients and perfor
 external work; the complete system is a driven hybrid system, not an unexplained
 nonlinear neural network between events. QR12 independent composition already
 reproduced this map near roundoff. These are source/previous evidence facts,
-not discoveries by the learner.
+not discoveries by the learner. The fixed-palette **mechanical/fluid subsystem**
+is linear; bounded sensing/traces and the gated controller are nonlinear readout/
+decision variables. The complete trace/controller state transition is not claimed
+to be linear. This distinction matters when interpreting reduced physical modes.
 
 **VERIFIED FACT.** The local packet has7 components, whereas the shared pressure
 and velocity state has4*n^3 entries. The current QR13 global compact instrument
@@ -69,8 +72,23 @@ needed to prepare that field is explicit apparatus work. Verify the entire compa
 observer equality independently, not just pressure. Veto all morphology, apply
 no subsequent drive. Keep identical boundaries/geometry/solver. Compare actual
 signed full-field and neural responses on P/F plus temporal refinement, including
-numerical uncertainty and threshold onset. Include zero-field, full-fluid predictor
-and a packet placed where it cannot reach a body within the window.
+numerical uncertainty and threshold onset. Include a zero-field arm and a full-fluid predictor reference. Track numerical
+threshold onset; do not infer an exact continuum front from tiny discrete tails.
+
+Proposed concrete inputs (NOT a registration or authorization): seed479, original
+SQ bodies/palettes, identical no-drive/vetoed morphology; pressure tensor hat
+center(12,12,6), radius1.5 in each coordinate, normalized separately on each grid
+to initial fluid energy1e-3; zero fluid velocity. Its positive support is disjoint
+from all current body supports. Test +q,-q,ZERO on P/T/F for12 time units:9 actual
+runs. Record full fields0,6,12 and every owned tick. Require identical initial
+compact observations for +q/-q, equal energy within1e-12, then a body signed-state
+difference>1e-8 and>=5 times refinement uncertainty on both grids, with the same
+energy-balance/numerical screens. These are proposed criteria for future review,
+not measurements or amendments to0013. Explicit E0/preparation-work accounting is
+required; do not double-subtract initial energy and preparation work or loosen the
+old zero-initial-state auditor. A new prepared-state adapter/protocol is needed.
+Conservative estimated budget:120 serial case seconds and1GB raw (estimates from
+existing QR12 rates, not a benchmark or permission to start). No GPU is needed.
 
 Predefine packet support/amplitude/arrival window and sign-response criteria BEFORE
 outcomes; never choose a favorable hidden packet afterwards. A small pilot can
@@ -127,3 +145,37 @@ WEAK INFERENCE: particular weakly observable modes explain existing weak remote
 effects. HYPOTHESIS: the exact registered hidden-fluid pair and weighted-modal
 predictors proposed above. UNRESOLVED: useful minimal state/history, predictive
 benefit beyond ordinary reductions, and any larger-network applicability.
+
+
+## Post-outcome addendum: missing control labels in the observer
+
+**VERIFIED FACT, post-outcome diagnostic.** The registered global predictor gets
+forcing kind but not the external FIXED/ADAPTIVE permission policy. Paired runs
+have identical supplied state/history/palette before16, yet future targets can
+differ after the permitted/vetoed event. Versioned `analysis/observability_0013.py`
+checks exact feature equality and finds13 conflicting u/v horizon labels per
+paired grid/seed. This was analyzed after final outcomes; it is not an original
+prospective prediction or learner-generated discovery. The original proposal
+above was written before those outcomes; this addendum is explicitly later.
+
+For equally weighted paired labels a,b at identical x, minimizing squared loss
+gives prediction(a+b)/2 and minimum average error(a-b)^2/4. The valid-family
+normalized lower bound is2.076343326e-5:only0.005469% of the selected baseline's
+error. **VERIFIED FACT:** this ambiguity is real and quantitatively tiny here.
+It cannot explain the51.3% neural error excess. No post-outcome feature repair,
+model refit, held-seed substitution or changed gate was performed.
+
+**STRONG INFERENCE:** before asking for an autonomous latent transition, retain
+known future apparatus commands as inputs in a new registered global instrument.
+Do not supply future accepted edges, work or state as if those outcomes were known.
+The local-observer restriction can remain explicit, with its irreducible missing-
+control uncertainty reported separately. A control-conditioned linear model is
+the first comparator; a larger neural model is not the first repair.
+
+**Concrete compositional question:** FIXED and ADAPTIVE are different lawful
+physical arrows. One shared latent map which erases their command labels need
+not describe both. Test a family of reduced maps indexed by the known command,
+alongside ordinary controlled state-space baselines. This is not a categorical
+advantage theorem. The hidden-fluid preparation test above asks a different,
+remaining question after known commands have been specified. Neither proposal
+changes0013 verdicts or authorizes another physical execution now.

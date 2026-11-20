@@ -17,6 +17,15 @@ For Experiment 0004, read `EXPERIMENT_0004.md` and `docs/EXPERIMENT_0004_RESULTS
 
 For the 3,072-tick every-tick extension read `EXPERIMENT_0004_EXTENSION.md` and `docs/EXPERIMENT_0004_EXTENSION_RESULTS.md`. It is one homogeneous seed7 AB+ fixture, not a retuned 35-case suite. Preserve the original 0004 sources/criteria/results. Replay is disk-indexed and cannot skip automatic ticks to catch up. Distinguish instantaneous below-threshold display, a sustained final quiet tail, and exact zero. Include the prior timestep-accuracy failure in exported agent reports.
 
+For Experiment0013, read `EXPERIMENT_0013.md`, its schema/results/exploitation,
+and `docs/EXPERIMENT_0013_CODEX_INDEPENDENT_PROPOSAL.md`. PyTorch is an external
+scientific observer only; Rust remains physical authority. Preserve complete seed
+families across splits, invalid controls and all failed predictions. Final seven
+valid held families give G2/G3/G4 FAIL; adaptive457 has a discrete P/F mismatch.
+Do not retune models/seeds/thresholds on final outcomes. The independent hidden-
+fluid/observability proposal is future work requiring a new registration, not
+an executed discovery or permission to alter physical initial conditions now.
+
 ## Research direction
 
 - Aim for roughly **80% Rust / 20% Python**, subject to change. This is an architectural direction, not a line-count quota.

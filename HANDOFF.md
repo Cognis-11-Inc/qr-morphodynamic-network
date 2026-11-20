@@ -2,8 +2,81 @@
 
 Updated: 2026-11-19 (America/Toronto).
 
-Current delivery: Experiment0012; see its final sections for current evidence,
-protocol deviations, separate diagnostics and delivery receipts.
+Current delivery: Experiment0013; the section below records current evidence.
+Historical sections retain their original delivery context.
+
+## Experiment0013 — external learner, current delivery
+
+Preregistration c018c65 against renamed main f23a390; external instrument4a69acb;
+held evaluation/independent proposal08a203d; audits/portable methods6e7b6aa.
+Rust source is byte-unchanged. PyTorch2.15.0+cpu is an external scientific observer,
+never a QR controller or a new neural architecture inside the substrate. CPU
+float32 learner, float64 physics/audit. Ryzen7950X/RTX5060Ti16GB inventory verified;
+CUDA execution was not tested/used. Optional requirements-learn.txt pins actual
+instrument dependencies; historical physics needs no torch.
+
+Read EXPERIMENT_0013.md, schema, measured results, exploitation and independent
+proposal before interpreting artifacts. Ignored root results/experiment_0013.
+Original QR12 archives are unchanged (known SHA); inventory binds raw files and
+prior audit receipts to their sealed archive members. All82 historical executions,
+including2 protocol-invalid controls and2 corrective diagnostics, remain explicit.
+Whole physical seed families:401 TRAIN,409 VALIDATION,419/427 retrospective TEST.
+No random timestamp split. Invalid/duplicate/private/scalar/oracle data excluded
+from modeling but retained in complete provenance. Compact observations use.2
+cadence; full fields remain sparse; all original405 traces and owned raw states
+remain available. Local/global observers are separate, with no future features.
+
+All24 MLP/GRU fits +3 autoencoders +one same-seed repeat are retained, bounded by
+registration. Normalization/PCA fit TRAIN only. Best seed17 global-palette MLP
+selected on409; strongest selected ordinary comparator global_1_pca_dmd (regularized
+linear observable map on a delay embedding). A separate PCA rank8 latent map also
+fits ordinary reduced dynamics. Models/splits/candidates/source/executable hashes
+sealed before any new physical execution; no fitting/selection on final outcomes.
+Same CPU/software repeated training yields identical weights/predictions; no cross-
+platform bitwise promise. Training/validation regimes are limited and shifted.
+
+32 actual new Rust trajectories:seeds431,433,439,443,449,457,461,463 x FIXED/ADAPTIVE
+xP/F,horizon24,SQ,unchanged original pulse/ports/event law. Case wall343.140542s,
+raw3543621599bytes,peak child RSS65644KiB,192 complete signed checkpoints and32
+owned every-tick streams. All independent mechanical/trace/work/field audits pass.
+Seed457 adaptive P/F differs in palettes/events (despite small continuous errors):
+whole family excluded from confirmatory gates, predictions retained. Seven other
+families satisfy both-policy numerical/event requirements. Never rescue discrete
+refinement failure with small aggregate/continuous error.
+
+G1 PASS. G2 FAIL:selected MLP normalized held u/v loss51.3% worse than linear
+baseline; fine-grid and both training replicas also worse. G3 FAIL:explicit palette
+adds no required event-crossing predictive value (~8% worse primary loss).
+G4 FAIL:rank8 autoencoder reconstruction30.8% worse and latent forecast23.4% worse
+than PCA on valid held families; replicas also fail. PCA rank8 explains96.115% of
+TRAIN normalized-state variance only, not universal/held state structure. All
+per-case/horizon/node/pressure/energy/rollout and negative-energy predictions remain.
+G5/G6 NOT RUN:no3 historical candidates qualified; no independent decision study.
+No new learner-generated physical mechanism, useful QR memory/intelligence or
+research-efficiency advantage. Exact known rules explain eligibility/occurrence/
+switching work; that is not learned discovery. Earlier QR12/QR11 failures remain.
+
+Independent proposal: same body kernel at both ports implies one instantaneous
+fluid-output direction, not two independent spatial channels; this is not a
+permanent dark-mode theorem. Compact observations omit most fluid state. Proposed
+0014 equal-energy hidden-fluid sign pair tests reduced-state closure, with explicit
+preparation work/numerical controls and separate future registration. Not executed
+or counted as0013 discovery. Priority is independent excitation/observability
+before bigger models. Exploitation favors bounded internal provenance/instrument
+reuse; predictive replacement/selection products deferred pending actual advantage.
+
+Local strict source checks:50 Rust tests,56 Python tests,3 viewer tests, format/
+lint/build/docs/compile passed; subsequent reporting-only checks are recorded in
+local-checks.json. Full archive includes unchanged QR12 archives as nested ancestry;
+validator restores raw paths only, never old source over current code. It replays
+sealed forecasts and runs one separately labelled rebuilt-Rust P trajectory as
+reproducibility evidence, not an independent dataset sample. Source/model/data
+hashes, archive integrity/fresh rebuild, remote SHA and hosted CI remain separate
+ignored receipts. Check actual final receipts before claiming delivery complete.
+
+Next scientific step needs a separate registration; do not enlarge/tune0013 models,
+seeds, thresholds or inputs to repair negative results. No additional investigation
+is authorized by this handoff alone.
 
 ## GitHub identity correction — 2026-11-19
 
