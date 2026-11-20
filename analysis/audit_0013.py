@@ -15,6 +15,8 @@ from analysis.experiment_0009 import rows
 def audit_dataset(root):
     root = Path(root)
     inventory = json.loads((root / "inventory.json").read_text())
+    if (root / "prospective-inventory.json").exists():
+        inventory += json.loads((root / "prospective-inventory.json").read_text())
     results = []
     families = {}
     for r in inventory:
