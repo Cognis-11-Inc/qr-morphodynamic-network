@@ -5,6 +5,30 @@ Updated: 2026-11-19 (America/Toronto).
 Current delivery: Experiment0012; see its final sections for current evidence,
 protocol deviations, separate diagnostics and delivery receipts.
 
+## GitHub identity correction — 2026-11-19
+
+Official project: **QR Morphodynamic Network**. The existing GitHub repository
+was renamed in place to https://github.com/Cognis-11-Inc/qr-morphodynamic-network;
+repository ID `R_kgDOVrHsLw` is unchanged. Description matches the user-supplied
+morphodynamic substrate description; public visibility and default `main` remain.
+Local HTTPS `origin` points to the renamed repository. Earlier handoff entries
+and scientific registrations/results retain the URLs and identifiers recorded
+at their original delivery; those are historical, not the current repository.
+
+Rust package metadata now uses `qr-morphodynamic-network`, with explicit library
+name `qr_neural_memory_system` and a viewer dependency alias preserving existing
+experiment imports. Python project metadata uses `qr-morphodynamic-analysis`.
+The existing local directory and completed evidence archives remain in place.
+No scientific source, registration, result, raw evidence or workflow was changed.
+
+Local metadata/documentation diff and TOML parsing passed. Root Rust formatting,
+strict Clippy, 50 tests, doc tests, release build and strict docs passed. Viewer
+formatting/Clippy and 3 tests passed; Python formatting/lint, 50 tests and compile
+passed. GitHub confirmed the same repository ID, original main tip and active
+workflow ID415165732 after rename. Delivery requires a normal push, remote main
+SHA verification and all four hosted CI jobs passing on that exact commit. Final
+live receipts are outside Git under `results/repository-rename-2026-11-19/`.
+
 ## Rehydrate
 
 Read `AGENTS.md`, `README.md`, `PRINCIPLES.md`, `HYPOTHESES.md`,
@@ -20,7 +44,7 @@ measured experiment failures, replay, and hosted delivery evidence.
 ## Project and user requirements
 
 - Local directory: `/home/cognis/Cognis_Lab/QR neural memory system`.
-- Public repository: https://github.com/Cognis-11-Inc/qr-neural-memory-system
+- Public repository: https://github.com/Cognis-11-Inc/qr-morphodynamic-network
 - Owner: Cognis 11 Inc. (`Cognis-11-Inc`); branch `main`; HTTPS `origin`.
 - Target approximately 80% Rust / 20% Python, flexible rather than a line quota.
 - 4,096 QR neurons, **each with an independently mutable internal spatial

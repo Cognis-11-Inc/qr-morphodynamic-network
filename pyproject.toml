@@ -1,8 +1,11 @@
 [project]
-name = "qr-neural-memory-analysis"
+name = "qr-morphodynamic-analysis"
 version = "0.1.0"
 description = "Analysis tools for QR Morphodynamic Network experiments"
 requires-python = ">=3.12"
+
+[project.urls]
+Repository = "https://github.com/Cognis-11-Inc/qr-morphodynamic-network"
 
 [tool.ruff]
 target-version = "py312"

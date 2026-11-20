@@ -3564,7 +3564,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d55d956fa96f5ec02be2e13af0e20391a5aa83d6a074e3ad368959d0fab299ea"
 
 [[package]]
-name = "qr-neural-memory-system"
+name = "qr-morphodynamic-network"
 version = "0.1.0"
 
 [[package]]
@@ -3572,7 +3572,7 @@ name = "qr-scientific-observatory"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "qr-neural-memory-system",
+ "qr-morphodynamic-network",
 ]
 
 [[package]]

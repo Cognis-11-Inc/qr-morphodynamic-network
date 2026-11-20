@@ -1,9 +1,14 @@
 [package]
-name = "qr-neural-memory-system"
+name = "qr-morphodynamic-network"
 version = "0.1.0"
 edition = "2024"
 publish = false
-description = "QR Morphodynamic Network: an experimental QR-inspired computational substrate"
+description = "Rust-first experimental morphodynamic neural substrate investigating fluid-mediated interactions, adaptive morphology, collective dynamics, and compositional systems."
+repository = "https://github.com/Cognis-11-Inc/qr-morphodynamic-network"
+
+# Preserve imports in frozen experiment implementations.
+[lib]
+name = "qr_neural_memory_system"
 
 [lints.rust]
 unsafe_code = "forbid"

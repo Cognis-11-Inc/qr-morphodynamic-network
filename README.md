@@ -1,6 +1,19 @@
 # QR Morphodynamic Network
 
-Formerly **QR Neural Memory System**.
+Formerly **QR Neural Memory System**. The existing repository was renamed; its
+commit history, experiments and CI workflows continue here.
+
+Official repository: [Cognis-11-Inc/qr-morphodynamic-network](https://github.com/Cognis-11-Inc/qr-morphodynamic-network).
+
+```sh
+git clone https://github.com/Cognis-11-Inc/qr-morphodynamic-network.git
+```
+
+The Rust package is `qr-morphodynamic-network` and Python project metadata uses
+`qr-morphodynamic-analysis`. The Rust library import `qr_neural_memory_system`
+and viewer dependency alias remain compatible with frozen experiment sources.
+Historical registrations, results, archive names and the existing local directory
+retain their recorded identifiers.
 
 An experimental, Rust-first investigation of a mutable, QR-inspired computational matrix.
 
@@ -214,7 +227,7 @@ RUSTDOCFLAGS='-D warnings' cargo doc --locked --no-deps --all-features
 .venv/bin/python -W error -m compileall -q analysis
 ```
 
-CI additionally sets `RUSTFLAGS='-D warnings'`. Workflow: [Severe CI](https://github.com/Cognis-11-Inc/qr-neural-memory-system/actions/workflows/ci.yml).
+CI additionally sets `RUSTFLAGS='-D warnings'`. Workflow: [Severe CI](https://github.com/Cognis-11-Inc/qr-morphodynamic-network/actions/workflows/ci.yml).
 
 The isolated viewer additionally has a headless compilation/test CI job; it does
 not open a window or establish native rendering correctness on GitHub runners.

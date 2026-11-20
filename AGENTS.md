@@ -1,4 +1,9 @@
-# Working agreement
+# QR Morphodynamic Network — working agreement
+
+Official repository: https://github.com/Cognis-11-Inc/qr-morphodynamic-network.
+This is the renamed existing repository. Preserve scientific history and frozen
+registrations/results; legacy library imports and recorded artifact identifiers
+are compatibility/provenance references, not the current project name.
 
 ## Rehydrate first
 

@@ -3,9 +3,11 @@ name = "qr-scientific-observatory"
 version = "0.1.0"
 edition = "2024"
 publish = false
+description = "QR Morphodynamic Network scientific observatory"
+repository = "https://github.com/Cognis-11-Inc/qr-morphodynamic-network"
 
 [dependencies]
-qr-neural-memory-system = { path = ".." }
+qr-neural-memory-system = { package = "qr-morphodynamic-network", path = ".." }
 bevy = { version = "=0.20.0", default-features = false, features = [
   "std", "async_executor", "multi_threaded", "bevy_asset", "bevy_color",
   "bevy_image", "bevy_log", "bevy_mesh", "bevy_camera", "bevy_render",
