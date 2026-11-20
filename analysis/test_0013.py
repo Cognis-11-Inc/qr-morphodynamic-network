@@ -58,6 +58,15 @@ class ObservationTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec("torch"), "optional external instrument dependency")
 class TorchSmokeTests(unittest.TestCase):
+    def test_paired_uncertainty_counts_families(self):
+        from analysis.evaluate_0013 import paired_test
+
+        r = paired_test(np.ones(8), np.full(8, 0.5))
+        self.assertEqual(r["families"], 8)
+        self.assertEqual(r["p_one_sided"], 1 / 256)
+        self.assertEqual(r["relative_improvement"], 0.5)
+        self.assertEqual(r["bootstrap95"], [0.5, 0.5])
+
     def test_cpu_forward_backward_does_not_change_observation(self):
         import torch
 

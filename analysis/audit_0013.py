@@ -102,11 +102,69 @@ def audit_dataset(root):
     return result
 
 
+def audit_predictions(root, partition):
+    root = Path(root)
+    records = json.loads((root / "training.json").read_text())
+    records += json.loads((root / "baselines.json").read_text())
+    inventory = json.loads((root / "inventory.json").read_text())
+    if (root / "prospective-inventory.json").exists():
+        inventory += json.loads((root / "prospective-inventory.json").read_text())
+    bycase = {r["id"]: r for r in inventory}
+    bymodel = {r["id"]: r for r in records}
+    checked = 0
+    for row in rows(root / (partition + "-metrics.csv")):
+        if row["stratum"] not in ("all", "event_crossing", "ordinary", "accepted_event"):
+            continue
+        record = bymodel[row["model"]]
+        case = bycase[row["case"]]
+        data = arrays(root, case, record["observer"], record["morphology"])
+        path = root / ("predictions_" + partition) / (case["id"] + "___" + record["id"] + ".npz")
+        with np.load(path) as p:
+            prediction = p["prediction"]
+            require(np.array_equal(p["time"], data["time"]), "QR13 prediction/origin alignment")
+        with np.load(root / record["normalization"]) as n:
+            scale = n["scale"]
+        error = ((prediction - data["y"]) / scale) ** 2
+        if record["observer"] == "local":
+            error = error.reshape(-1, 4, 3, 130).transpose(0, 2, 1, 3)
+            crossing, accepted = data["crossing"][::4], data["accepted"][::4]
+        else:
+            error = error.reshape(-1, 3, 4, 130)
+            crossing, accepted = data["crossing"], data["accepted"]
+        mask = {
+            "all": None,
+            "event_crossing": crossing,
+            "ordinary": ~crossing,
+            "accepted_event": accepted,
+        }[row["stratum"]]
+        if mask is not None:
+            error = error[mask]
+        if error.size:
+            measured = float(error[..., :128].mean())
+            claimed = float(row["uv_loss"])
+            require(
+                abs(measured - claimed) <= 1e-12 * max(abs(measured), 1),
+                "QR13 independently reconstructed forecast loss",
+            )
+        else:
+            require(row["uv_loss"] in ("", "None"), "QR13 undefined strata remain undefined")
+        checked += 1
+    result = dict(partition=partition, checked_losses=checked, valid=True)
+    save(root / (partition + "-independent-metrics-audit.json"), result)
+    return result
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("root", type=Path)
+    p.add_argument("--predictions", choices=("retrospective_test", "prospective_test"))
     a = p.parse_args()
-    print(json.dumps(audit_dataset(a.root), indent=2))
+    print(
+        json.dumps(
+            audit_predictions(a.root, a.predictions) if a.predictions else audit_dataset(a.root),
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

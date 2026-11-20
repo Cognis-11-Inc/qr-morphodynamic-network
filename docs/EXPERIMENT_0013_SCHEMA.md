@@ -49,3 +49,26 @@ with all learned/baseline/latent files and candidate registry. No refit on tests
 The CPU learner is optional for historical physics. Install `requirements-learn.txt`
 for training or the dedicated hosted CPU smoke tests. Original Python quality jobs
 can run extraction/alignment tests without torch. No GPU/CUDA execution is required.
+
+The executed CPU environment and full installed dependency lock are archived in
+`environment.json` and `environment-lock.txt`; the instrument's torch/transitive
+pins are in `requirements-learn.txt`. CPU setup follows the
+[official PyTorch installation interface](https://pytorch.org/get-started/locally/).
+Deterministic operations follow the
+[official API contract](https://docs.pytorch.org/docs/main/generated/torch.use_deterministic_algorithms.html);
+actual same-environment equality is measured separately. The CPU build has no CUDA
+runtime: NVIDIA hardware/driver inventory is evidence of hardware availability,
+not a tested CUDA/architecture execution claim.
+
+## Linear-map naming and assumptions
+
+The frozen `pca_dmd` identifier denotes a regularized linear observable forecast
+from PCA coordinates of the three-lag embedding. With centered design matrix
+X=U*S*V^T, rank r and penalty lambda, its coefficient is
+V_r*diag(s/(s^2+lambda))*U_r^T*D, plus the mean residual, where D is the future
+physical-observable residual. This is a reduced-rank input/output regression
+(DMD-style rectangular observable map); it does not prove those delayed compact
+observables form a closed physical state. The separate rank8 PCA latent model
+fits an affine8-to8 map for each horizon, including the ordinary .2-step latent
+DMD/linear evolution. Both are ordinary reduced linear models. Neither is counted
+as a separate scientific discovery or an advantage from a name.
